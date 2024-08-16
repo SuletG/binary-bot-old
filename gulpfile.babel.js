@@ -3,10 +3,21 @@ const watch = require('gulp-watch');
 const ghpages = require('gh-pages');
 const connect = require('gulp-connect');
 const open = require('gulp-open');
+const sass = require('gulp-sass')(require('sass')); // Use 'sass' compiler
+
 require('./gulp/i18n');
 require('./gulp/build');
 require('./gulp/plato');
 
+// Task to compile Sass
+gulp.task('sass', () => 
+    gulp
+        .src('static/css/**/*.scss') // Updated source directory
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest('www/css')) // Updated destination directory
+);
+
+// Task to serve files with live reload
 gulp.task(
     'connect',
     gulp.series(done => {
@@ -19,6 +30,7 @@ gulp.task(
     })
 );
 
+// Task to open the browser
 gulp.task(
     'open',
     gulp.series(done => {
@@ -31,6 +43,7 @@ gulp.task(
     })
 );
 
+// Task to watch for file changes and reload
 gulp.task(
     'serve',
     gulp.series('open', 'connect', done => {
@@ -39,6 +52,7 @@ gulp.task(
     })
 );
 
+// Task to release to a specific branch
 gulp.task(
     'release-branch',
     gulp.series(done => {
@@ -58,6 +72,7 @@ gulp.task(
     })
 );
 
+// Task to release to the master branch
 gulp.task(
     'release-master',
     gulp.series(done => {
@@ -75,13 +90,18 @@ gulp.task(
     })
 );
 
-gulp.task('test-deploy', gulp.series('build-min', 'serve', () => {}));
+// Task for testing deployment
+gulp.task(
+    'test-deploy',
+    gulp.series('build-min', 'serve', () => {})
+);
 
+// Task to watch static files for changes
 gulp.task(
     'watch-static',
     gulp.parallel(done => {
         gulp.watch(
-            ['static/xml/**/*', 'static/*.html', 'static/css/*.scss'],
+            ['static/xml/**/*', 'static/*.html', 'static/css/**/*.scss'], // Updated path
             {
                 debounceTimeout: 1000,
             },
@@ -91,6 +111,7 @@ gulp.task(
     })
 );
 
+// Task to watch HTML files for changes
 gulp.task(
     'watch-html',
     gulp.series(done => {
@@ -105,6 +126,8 @@ gulp.task(
     })
 );
 
-gulp.task('watch', gulp.series('build', 'serve', 'watch-static', 'watch-html'));
+// Combined watch task
+gulp.task('watch', gulp.series('build', 'sass', 'serve', 'watch-static', 'watch-html'));
 
+// Default task
 gulp.task('default', gulp.series('watch'));
