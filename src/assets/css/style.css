@@ -1,0 +1,28 @@
+.codeMe-component:hover {
+    /* border:1px red solid; */
+}
+
+#fixMeDetectBox {
+    /* direction: ltr; */
+    line-height: 15px;
+}
+
+#fixMeDetectBox *:not(.CodeMeCanvas *) {
+    box-sizing: content-box;
+}
+
+#fixMeDetectBox *:not(.CodeMeCanvas *) {
+    box-sizing: content-box;
+    direction: ltr;
+    text-align: left;
+}
+
+#superDeveloper111 {
+    z-index: 1000000000000;
+    top: 0px;
+    left: 0px;
+}
+
+.fixMe_addMarginBottom {
+    padding-bottom: 43px;
+}

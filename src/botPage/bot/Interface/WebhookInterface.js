@@ -9,7 +9,9 @@ export default Interface =>
             const fetchOption = {
                 method : 'POST',
                 mode   : 'cors',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             };
 
             if (payload) {
@@ -31,3 +33,6 @@ export default Interface =>
             };
         }
     };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/Interface/WebhookInterface.js

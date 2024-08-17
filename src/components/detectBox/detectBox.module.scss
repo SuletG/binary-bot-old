@@ -1,0 +1,134 @@
+@import '../colors.scss';
+.detectBox {
+    width:336px;
+    height:500px;
+    line-height: normal;
+    border-radius: 8px;
+    transition:0.2s height;
+    background:rgba(16,16,32,0.93);
+    backdrop-filter: blur(5px);
+    font-family: $font;
+    box-shadow: 0px 0px 10px rgb(142,138,138);
+    // direction:ltr;
+    text-align: left;
+    animation-name: bounceInRight;
+    animation-duration: 0.2s;
+    position: fixed;
+    top:0px;
+    left:0px;
+    /* top:0px;
+    right:0px; */
+    z-index: 10000000000000000;
+}
+.detectBox_move{
+    width:28px;
+    height:28px;
+    border-radius: 50%;
+    border:1px $bg-hard solid;
+    color: var($color);
+    background:$bg-hard;
+    cursor: pointer;
+    transition:0.2s all;
+    position:absolute;
+    top:50%;
+    left:-14px;
+    z-index: 2;
+}
+.detectBox_moveLeft{
+    left:initial;
+    right:-14px;
+}
+.detectBox_move:hover{
+    color:$main;
+    border:1px $main solid;
+}
+.detectBox_move_icon{
+    width: 8px;
+    color:$input-color;
+    position: relative;
+    left: 50%;
+    margin-left: -8px;
+    top: 6px;
+    z-index: 2;
+}
+.detectBox_move:hover .detectBox_move_border{
+    border:rgba(172,168,168,0) 1px solid;
+    background:rgba(255,255,255,0)
+}
+.detectBox_move_borderHidden{
+    width:50%;
+    height:100%;
+    overflow: hidden;
+    position: absolute;
+    top:0px;
+    left:0px;
+}
+.detectBox_move_borderHiddenLeft{
+    left:50%;
+}
+.detectBox_move_borderHiddenLeft .detectBox_move_border{
+    width:calc(200% - 2px);
+    position: relative;
+    left:-100%
+}
+.detectBox_move_border{
+    width:200%;
+    height:calc(100% - 2px);
+    border-radius: 50%;
+    border:rgba(172,168,168,.3) 1px solid;
+    transition:0.2s all;
+}
+.detectBoxLeft{
+    left:0px;
+    right:initial;
+} 
+/* svg{
+    width:16px;
+} */
+.detectBox * {
+    box-sizing: content-box;
+}
+
+.detectBox label{
+    margin:0px;
+}
+.detectBox_emptyText{
+    font-family: $font;
+    padding:$padding;
+    font-size:14px;
+    color:$color;
+    text-align: center !important;
+    margin-top: -15px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.detectBox_scroll{
+    /* min-height: 245px; */
+    height: calc(100% - 80px);
+    overflow: scroll;
+}
+.detectBox_scrollForHistory{
+    min-height: 291px ;
+}
+.detectBox_scrollForSignUp{
+    height: 100vh;
+}
+.detectBox_Minimaze{
+    height: 30px;
+}
+.detectBox :global .detectBox_dragArea {
+    width:100%;
+    height:30px;
+    cursor:move;
+}
+
+@-webkit-keyframes bounceInRight {
+    from {
+      margin-left:300px;
+    }
+  
+    to {
+        margin-left:0px;
+    }
+  }

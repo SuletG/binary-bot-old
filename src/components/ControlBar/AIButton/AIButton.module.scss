@@ -1,0 +1,51 @@
+@import "../../colors.scss";
+$button-size: 32px;
+.button {
+  height: $button-size;
+  border-radius: 18px;
+  padding: 0px 16px;
+  margin: 0px 6px;
+  border: 1px rgba(56, 205, 114, 0) solid;
+  font-family: $font;
+  font-size: 12px;
+  transition: 0.2s all;
+  display: flex;
+  color: $color;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+    color: $color;
+    box-shadow: rgba(56, 205, 114, 0.4) 0px 3px 5px -1px,
+      rgba(13, 14, 13, 0.28) 0px 6px 10px 0px,
+      rgba(56, 205, 114, 0.24) 0px 1px 18px 0px;
+
+    .beta {
+      opacity: 1;
+    }
+  }
+}
+.button_active {
+  background: #38cd72;
+  border: 1px #2cd570 solid;
+}
+.icon {
+  margin-right: 8px;
+  font-size: 14px;
+}
+.text {
+  font-family: $font;
+}
+.beta {
+  opacity: 0;
+  width: 100%;
+  font-size: 10px;
+  text-align: center;
+  transition: 0.3s opacity;
+  text-align: center !important;
+  position: absolute;
+  bottom: -10px;
+}

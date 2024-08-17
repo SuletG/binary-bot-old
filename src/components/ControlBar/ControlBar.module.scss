@@ -1,0 +1,294 @@
+@import "../colors.scss";
+$searchSize: 140px;
+$barWidth: 136px;
+$shadow: rgb(100, 100, 100); //$modal-shadow
+.ControlBar_mainWrapper {
+  width: 310px;
+  height: 38px;
+  border-radius: 24px;
+  background: $bg-blur;
+  padding: 4px 0px;
+  box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.25) inset,
+    0px 1px 1px 0px rgba(0, 0, 0, 0.25) inset,
+    0px 24px 30px 0px rgba(0, 0, 0, 0.05);
+  backdrop-filter: $blur;
+  transform: translateX(-50%);
+  font-family: $font;
+  transition: 0.2s all;
+  position: fixed;
+  bottom: 4px;
+  left: 50%;
+  z-index: 2147483644;
+
+  &:hover {
+    .ControlBar_close,
+    .toolButtons {
+      opacity: 1;
+    }
+  }
+}
+.toolButtons {
+  opacity: 1;
+  transition: 0.1s all;
+}
+.canvasOpen {
+  bottom: calc(100vh - 35px);
+}
+.ControlBar_main {
+  width: 100%;
+  height: 100%;
+  font-family: "Roboto";
+  z-index: 9999;
+  justify-content: center;
+  display: flex;
+  transition: 0.2s all, 0s transform;
+  position: relative;
+}
+.ControlBar_mainDesign {
+  bottom: -60px;
+
+  .ControlBar_main {
+    display: none;
+  }
+}
+.ControlBar_mainVideo {
+  width: 170px;
+}
+.ControlBar_mainComment {
+  width: 0px;
+}
+.ControlBar_mainMinimaze {
+  border-radius: 20px 20px 0px 0px;
+  bottom: 8px;
+}
+.ControlBar_mainMinimaze {
+  width: 160px;
+  height: 16px;
+}
+.ControlBar_mainMinimaze:hover {
+  height: 20px;
+  width: 160px;
+}
+.ControlBar_mainMinimaze .ControlBar_openFixMe {
+  display: block;
+}
+.ControlBar_mainMinimaze .ControlBar_main {
+  border-radius: 20px 20px 0px 0px;
+  padding: 4px 6px;
+  left: 4px;
+}
+.ControlBar_openFixMe {
+  color: white;
+  font-size: 14px;
+  display: none;
+}
+.ControlBar_controls {
+  height: 100%;
+  display: flex;
+  font-size: 10px;
+  text-align: center;
+  align-items: center;
+  transition: 0.2s all;
+  justify-content: space-evenly;
+  justify-items: center;
+}
+.ControlBar_handle {
+  width: 15%;
+  height: 3px;
+  margin: 0 auto;
+  background: #e4e4e4;
+  cursor: move;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  position: relative;
+  top: 5px;
+}
+.ControlBar_controls > div:last-child {
+  margin-right: 8px;
+}
+.ControlBar_mini {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  bottom: 10px;
+  left: 10px;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  backdrop-filter: blur(2px);
+  box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.08);
+}
+.ControlBar_mini_icon {
+  display: block;
+  margin: 0 auto;
+  margin-top: 14px;
+  color: #35b686;
+  cursor: pointer;
+}
+.ControlBar_notLogin {
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  line-height: 32px;
+  transition: 0.2s all;
+}
+.notLogin {
+  border-radius: 20px;
+  font-family: $font;
+  text-align: center;
+  padding: 0px 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.ControlBar_mainMinimaze .ControlBar_notLogin {
+  line-height: 16px;
+}
+.ControlBar_notLogin u:hover {
+  transform: scale(1.05);
+  color: $main;
+  cursor: pointer;
+}
+.search {
+  height: calc(100% - 6px);
+  width: calc(#{$searchSize} - 20px);
+  opacity: 0;
+  padding-right: 10px;
+  padding-left: 30px;
+  font-size: 12px;
+  position: absolute;
+  transition: 0.2s all;
+  color: $input-color;
+  background: $input-bg;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  top: 4px;
+  right: 6px;
+
+  &:hover,
+  &:focus {
+    background: $input-bg-hover;
+    color: white;
+  }
+}
+.reactDetectionOpen {
+  width: 290px;
+  border-radius: 8px 8px 0px 0px;
+  height: 20px;
+  line-height: 20px;
+  bottom: 0px;
+
+  .ControlBar_main {
+    display: block;
+  }
+}
+.ReactDetectionText {
+  width: 290px;
+  overflow: hidden;
+  text-align: center !important;
+  color: white;
+  font-size: 12px;
+  font-family: $font;
+}
+.ReactDetectionText_close {
+  cursor: pointer;
+  transition: 0.2s all;
+  padding: 4px;
+  position: absolute;
+  top: -8px;
+  right: 2px;
+
+  &:hover {
+    color: $main;
+    // transform: scale(1.1);
+  }
+}
+.BlockDetect {
+  width: 300px;
+  height: 160px;
+  line-height: normal;
+  cursor: auto;
+  position: absolute;
+  bottom: 28px;
+  right: -126px;
+}
+.BlockDetect_wrapper {
+  height: calc(100% - 10px);
+  background: rgba(16, 16, 32, 0.9);
+  box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(5px);
+  border-radius: 4px;
+  padding: 8px;
+  box-sizing: border-box !important;
+
+  &:after {
+    content: " ";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 8px 8px 0px;
+    filter: drop-shadow(-3px 0px 5px $shadow);
+    border-color: transparent rgba(26, 26, 42, 1) transparent transparent;
+    transform: translate(-50%, 0%) rotate(-90deg);
+    transition: ease 0.15s all;
+    margin-top: -9px;
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+  }
+}
+
+.BlockDetect_title {
+  width: 100%;
+  text-align: center !important;
+  font-size: 20px;
+  color: white;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+.BlockDetect_text {
+  color: white;
+  font-size: 12px;
+}
+.BlockDetect_link {
+  color: $main;
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+  margin-left: 8px;
+  transition: 0.2s all;
+
+  &:hover {
+    font-size: 13px;
+  }
+}
+.ControlBar_close {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  opacity: 0;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color;
+  cursor: pointer;
+  transition: 0.2s ease-in all;
+  position: absolute;
+  top: -4px;
+  right: 6px;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+.ControlBar_closeAlwaysOpen {
+  opacity: 1;
+}
+@media only screen and (max-width: 800px) {
+  .ControlBar_mainWrapper {
+    display: none;
+  }
+}

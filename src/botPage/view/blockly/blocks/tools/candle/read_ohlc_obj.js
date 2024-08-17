@@ -2,6 +2,7 @@
 import config from '../../../../../common/const';
 import { translate } from '../../../../../../common/i18n';
 import { expectValue } from '../../shared';
+import theme from '../../../theme';
 
 Blockly.Blocks.read_ohlc_obj = {
     init: function init() {
@@ -12,9 +13,8 @@ Blockly.Blocks.read_ohlc_obj = {
             .appendField(translate('value in candle'));
         this.setInputsInline(false);
         this.setOutput(true, 'Number');
-        this.setColour('#dedede');
+        this.setColour(theme.subBlockColor);
         this.setTooltip(translate('Read a field in a candle (read from the Candles list)'));
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
     },
 };
 
@@ -23,3 +23,6 @@ Blockly.JavaScript.read_ohlc_obj = block => {
     const ohlcObj = expectValue(block, 'OHLCOBJ');
     return [`Bot.candleField(${ohlcObj}, '${ohlcField}')`, Blockly.JavaScript.ORDER_ATOMIC];
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/tools/candle/read_ohlc_obj.js

@@ -9,3 +9,6 @@ export const SELL = 'SELL';
 export const START = 'START';
 export const STOP = 'STOP';
 export const NEW_TICK = 'NEW_TICK';
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/state/constants.js

@@ -1,5 +1,6 @@
-import { marketDropdown, tradeTypeDropdown, candleInterval, contractTypes, restart } from './components';
+import { marketDropdown, tradeTypeDropdown, candleInterval, contractTypes, restart, virtualTrades } from './components';
 import { findTopParentBlock } from '../../utils';
+// import virtualTrades from './virtualTradesSetup';
 import { observer as globalObserver } from '../../../../../common/utils/observer';
 
 export const getParentValue = (block, fieldName) => {
@@ -139,7 +140,11 @@ export const marketToTradeOption = (market, marketOptions) => {
 export const marketDefPlaceHolders = block => {
     marketDropdown(block);
     tradeTypeDropdown(block);
-    contractTypes(block);
+    // contractTypes(block);
     candleInterval(block);
     restart(block);
+    // virtualTrades(block);
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/trade/tools.js

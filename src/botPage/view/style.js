@@ -4,7 +4,7 @@ export const content = {
 
 export const dialogLayout = {
     height   : 'auto',
-    width    : '25em',
+    width    : '28em',
     resizable: false,
 };
 
@@ -98,7 +98,10 @@ export const loading = {
     fontSize  : '1.5em',
 };
 
-export const iframe = { width: '100%', height: '100%' };
+export const iframe = {
+    width : '100%',
+    height: '100%',
+};
 
 export const exportButton = {
     position: 'absolute',
@@ -109,7 +112,9 @@ export const exportButton = {
     height  : '2em',
 };
 
-export const tradeTableExport = { marginTop: '-2.5em' };
+export const tradeTableExport = {
+    marginTop: '-2.5em',
+};
 
 export const bottomWarning = {
     bottom    : '0px',
@@ -123,21 +128,50 @@ export const bottomWarning = {
     fontSize  : '0.8em',
 };
 
-export const bottomWarningLink = { textDecoration: 'underline' };
+export const bottomWarningLink = {
+    textDecoration: 'underline',
+};
 
-export const green = { color: 'green' };
+export const green = {
+    color: 'green',
+};
 
-export const greenLeft = { color: 'green', float: 'left' };
+export const greenLeft = {
+    color: 'green',
+    float: 'left',
+};
 
-export const red = { color: 'red' };
+export const red = {
+    color: 'red',
+};
 
-export const redLeft = { color: 'red', float: 'left' };
+export const redLeft = {
+    color: 'red',
+    float: 'left',
+};
 
-export const tradePanelAccount = { float: 'right' };
+export const blueLeft = {
+    color: '#42A5F5',
+    float: 'left',
+};
 
-export const left = { float: 'left' };
+export const whiteLeft = {
+    color: '#ccc',
+    float: 'left',
+};
+
+export const tradePanelAccount = {
+    float: 'right',
+};
+
+export const left = {
+    float: 'left',
+};
 
 export const warningText = {
     'font-size': '12px',
     color      : 'lightgray',
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/style.js

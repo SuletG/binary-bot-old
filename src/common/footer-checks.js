@@ -28,14 +28,15 @@ export const hasEuAccount = token_list =>
     token_list.some(token_obj => isEuLandingCompany(token_obj.loginInfo.landing_company_name));
 
 export const isEuCountry = async (api = generateLiveApiInstance()) => {
-    const { website_status } = await api.send({ website_status: 1 });
+    // const { website_status } = await api.send({ website_status: 1 });
+    const { website_status } = await api.getWebsiteStatus().catch(e => console.log('website', e));
     let { clients_country } = website_status;
 
     // isLoggedin
     if (getTokenList().length) {
         clients_country = localStorage.getItem('residence');
     }
-    const { landing_company } = await api.send({ landing_company: clients_country });
+    const { landing_company } = await api.getLandingCompany(clients_country).catch(e => console.log('landing', e));
     const { financial_company, gaming_company } = landing_company;
     const eu_excluded_regexp = /^mt$/;
     const financial_shortcode = financial_company ? financial_company.shortcode : false;
@@ -48,3 +49,6 @@ export const isEuCountry = async (api = generateLiveApiInstance()) => {
 };
 
 /* eslint-enable */
+
+// WEBPACK FOOTER //
+// ./src/common/footer-checks.js

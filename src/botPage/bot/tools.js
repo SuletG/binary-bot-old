@@ -13,7 +13,10 @@ export const tradeOptionToProposal = (tradeOption, purchaseReference) =>
             currency     : tradeOption.currency,
             symbol       : tradeOption.symbol,
             duration     : tradeOption.duration,
-            amount       : roundBalance({ currency: tradeOption.currency, balance: tradeOption.amount }),
+            amount       : roundBalance({
+                currency: tradeOption.currency,
+                balance : tradeOption.amount,
+            }),
             contract_type: type,
             passthrough  : {
                 contractType: type,
@@ -47,7 +50,7 @@ export const getDirection = ticks => {
     return direction;
 };
 
-export const getLastDigit = tick => (Number.isInteger(tick) ? tick % 10 : Number(tick.toString().slice(-1)));
+export const getLastDigit = tick => (Number.isInteger(tick) ? tick % 10 : Number(tick.toString().slice(-1)[0]));
 
 export const subscribeToStream = (observer, name, respHandler, request, registerOnce, type, unregister) =>
     new Promise(resolve => {
@@ -58,7 +61,10 @@ export const subscribeToStream = (observer, name, respHandler, request, register
                 resolve();
             },
             registerOnce,
-            type && { type, unregister },
+            type && {
+                type,
+                unregister,
+            },
             true
         );
         request();
@@ -157,7 +163,12 @@ export const doUntilDone = (f, types) => {
 
 export const createDetails = (contract, pipSize) => {
     const { sell_price: sellPrice, buy_price: buyPrice, currency } = contract;
-    const profit = Number(roundBalance({ currency, balance: sellPrice - buyPrice }));
+    const profit = Number(
+        roundBalance({
+            currency,
+            balance: sellPrice - buyPrice,
+        })
+    );
     const result = profit < 0 ? 'loss' : 'win';
 
     return [
@@ -177,11 +188,32 @@ export const createDetails = (contract, pipSize) => {
     ];
 };
 
+export const createActualDetails = (contract, pipSize) => {
+    // console.log(contract);
+    const array = [
+        contract.transaction_ids.buy, // transition id buy
+        +contract.buy_price, // buy price
+        +contract.payout, // sell price
+        contract.profit, // profit
+        contract.contract_type, // contract type
+        contract.entry_tick_time
+            ? getUTCTime(new Date(parseInt(`${contract.entry_tick_time}000`)))
+            : 'Waiting for the entry tick', // entry spot
+        +(contract.entry_tick || 0), // entry value
+        (+(contract.entry_tick || 0)).toFixed(pipSize), // entry value string
+        +(contract.barrier || 0), // barrier
+    ];
+    return array;
+};
+
 export const getUUID = () => `${new Date().getTime() * Math.random()}`;
 
 export const showDialog = options =>
     new Promise((resolve, reject) => {
-        const $dialog = $('<div/>', { class: 'draggable-dialog', title: options.title });
+        const $dialog = $('<div/>', {
+            class: 'draggable-dialog',
+            title: options.title,
+        });
         options.text.forEach(text => $dialog.append(`<p style="margin: 0.7em;">${text}</p>`));
         const defaultButtons = [
             {
@@ -204,11 +236,13 @@ export const showDialog = options =>
             },
         ];
         const dialogOptions = {
-            autoOpen : false,
-            classes  : { 'ui-dialog-titlebar-close': 'icon-close' },
+            autoOpen: false,
+            classes : {
+                'ui-dialog-titlebar-close': 'icon-close',
+            },
             closeText: '',
             height   : 'auto',
-            width    : 600,
+            width    : 700,
             modal    : true,
             resizable: false,
             open() {
@@ -218,8 +252,12 @@ export const showDialog = options =>
                     .removeClass('ui-button ui-corner-all ui-widget');
             },
         };
-        Object.assign(dialogOptions, { buttons: options.buttons || defaultButtons });
-
+        Object.assign(dialogOptions, {
+            buttons: options.buttons || defaultButtons,
+        });
         $dialog.dialog(dialogOptions);
         $dialog.dialog('open');
     });
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/tools.js

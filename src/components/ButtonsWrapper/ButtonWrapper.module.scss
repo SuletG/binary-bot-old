@@ -1,0 +1,56 @@
+@import '../colors.scss';
+.ButtonsWrapper_FontStyles{
+    width:100%;
+    height: 28px;
+    margin-top:$padding;
+    align-items: center;
+    display: flex;
+}
+.ButtonsWrapper_button {
+    color:$input-color !important;
+    transition:0.2s all;
+}
+.ButtonsWrapper_button:hover {
+    color:white !important;
+}
+.ButtonsWrapper_buttonGroup {
+    height: 28px;
+    width:calc(100% - #{$label-width});
+    color:$input-color;
+    background:$input-bg;
+}
+.ButtonsWrapper_buttonGroup :global .MuiToggleButton-root.Mui-selected{
+    color:white !important;
+    background:none;
+}
+.ButtonsWrapper_buttonGroup :global .MuiToggleButton-root.Mui-selected .ButtonsWrapper_buttonGroup:hover{
+    color:white;
+}
+.ButtonsWrapper_buttonGroup :global .MuiToggleButton-root .MuiToggleButton-label {
+    transition:0.2s all;
+    height: 26px;
+    text-align: center !important;
+}
+.ButtonsWrapper_buttonGroup :global .MuiToggleButton-root.Mui-selected .MuiToggleButton-label{
+    background: $bg-hard;
+    border-radius: 4px;
+}
+.ButtonsWrapper_buttonGroup :global .MuiSvgIcon-root{
+    width:14px;
+    /* height:21px; */
+}
+.ButtonsWrapper_buttonGroup :global .MuiButtonBase-root{
+    padding:1px !important;
+    border-radius: 4px;
+    margin:0px !important
+}
+.ButtonsWrapper_buttonGroup :global .MuiToggleButtonGroup-grouped{
+    width: 100%;
+    display: block;
+    border: none !important;
+}
+.ButtonsWrapper_label{
+    width: $label-width;
+    color:$color;
+    font-size: 12px;
+}

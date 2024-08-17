@@ -135,3 +135,6 @@ export default class DataCollection {
 }
 
 export const createDataStore = workspace => new DataCollection(workspace);
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/data-collection.js

@@ -8,13 +8,14 @@ let tmpApi = generateLiveApiInstance();
 
 export const symbolApi = new _Symbol(tmpApi);
 
-export const symbolPromise = new Promise(resolve => {
-    symbolApi.initPromise.then(() => {
-        tmpApi.disconnect();
-        tmpApi = null;
-        resolve();
+export const symbolPromise = api =>
+    new Promise(resolve => {
+        symbolApi.initPromise(api).then(() => {
+            tmpApi.disconnect();
+            tmpApi = null;
+            resolve();
+        });
     });
-});
 
 export const ticksService = new TicksService(generateLiveApiInstance());
 
@@ -22,7 +23,12 @@ export const createScope = () => {
     const api = generateLiveApiInstance();
     const observer = new Observer();
 
-    return { observer, api, ticksService, symbolApi };
+    return {
+        observer,
+        api,
+        ticksService,
+        symbolApi,
+    };
 };
 
 export const appendRow = (trade, state, isDesc = false) => ({
@@ -56,8 +62,13 @@ export const updateRow = (prevRowIndex, trade, state) => ({
 });
 
 export const saveAs = ({ data, filename, type }) => {
-    const blob = new Blob([data], { type });
+    const blob = new Blob([data], {
+        type,
+    });
     filesaver.saveAs(blob, filename);
 };
 
 export const restrictInputCharacter = ({ whitelistRegEx, input }) => input.match(new RegExp(whitelistRegEx));
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/shared.js

@@ -1,0 +1,16 @@
+@import '../colors.scss';
+.wrapper{
+    display: flex;
+    transition: 0.2s all;
+}
+.value {
+    height: 28px;
+    width:calc(100% - #{$label-width});
+    text-overflow: ellipsis;
+    overflow: hidden; 
+    line-height: 28px;
+    color: $input-color;
+}
+.inputDisable{
+    opacity:0.5;
+}

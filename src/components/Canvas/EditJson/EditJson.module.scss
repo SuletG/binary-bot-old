@@ -1,0 +1,44 @@
+@import '../../colors.scss';
+.wrapper{
+    width:360px;
+    max-height: 400px;
+    overflow: auto;
+    direction: ltr;
+    background:rgba(16,16,32,0.8);
+    box-shadow: $modal-shadow;
+    backdrop-filter: blur(10px);
+    padding:$paddingx2;
+    padding-top:0px;
+    border-radius:8px;
+    font-size:12px;
+    color:$color;
+    transform: translate(100%,0%);
+    position:absolute;
+    top:10px;
+    right:-10px;
+    z-index: 2;
+    animation: fadeIn 0.2s normal forwards ease-in-out;
+}
+.addRow {
+    width: calc(100% - #{$padding});
+    color:$main;
+    text-align: right;
+    cursor: pointer;
+    transition: 0.2s all;
+}
+.close {
+    position: absolute;
+    top:calc(#{$padding} * 3);
+    right:calc(#{$padding} * 3);
+    transition:0.2s all;
+    cursor: pointer;
+    z-index: 2;
+
+    &:hover{
+        color:$main;
+    }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }

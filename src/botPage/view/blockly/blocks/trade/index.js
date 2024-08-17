@@ -2,11 +2,13 @@ import { observer as globalObserver } from '../../../../../common/utils/observer
 import { translate } from '../../../../../common/i18n';
 import config from '../../../../common/const';
 import { setBlockTextColor, findTopParentBlock, deleteBlockIfExists } from '../../utils';
-import { defineContract } from '../images';
+// import { defineContract } from '../images';
 import { updatePurchaseChoices, fieldGeneratorMapping, dependentFieldMapping } from '../shared';
 import { marketDefPlaceHolders } from './tools';
 import backwardCompatibility from './backwardCompatibility';
 import tradeOptions from './tradeOptions';
+// import virtualTrades from './virtualTradesSetup';
+import theme from '../../theme';
 
 const bcMoveAboveInitializationsDown = block => {
     Blockly.Events.recordUndo = false;
@@ -87,18 +89,19 @@ const resetTradeFields = (trade, ev) => {
 Blockly.Blocks.trade = {
     init: function init() {
         this.appendDummyInput()
-            .appendField(new Blockly.FieldImage(defineContract, 25, 25, 'T'))
-            .appendField(translate('(1) Define your trade contract'));
+            // .appendField(new Blockly.FieldImage('', 0, 0, 'TD'))
+            .appendField(new Blockly.FieldImage('', 0, 0, ''))
+            .appendField(translate('Trade Definitions'), 'TITLE');
         marketDefPlaceHolders(this);
         this.appendDummyInput().appendField(`${translate('Run Once at Start')}:`);
         this.appendStatementInput('INITIALIZATION').setCheck(null);
-        this.appendDummyInput().appendField(`${translate('Define Trade Options')}:`);
+        this.appendDummyInput().appendField(`${translate('Trade Options')}:`);
         this.appendStatementInput('SUBMARKET').setCheck(null);
-        this.setColour('#2a3052');
+        this.setColour(theme.blockColor);
         this.setTooltip(
             translate('Define your trade contract and start the trade, add initializations here. (Runs on start)')
         );
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
+        Blockly.Blocks.trade.self = this;
     },
     onchange: function onchange(ev) {
         setBlockTextColor(this);
@@ -112,6 +115,10 @@ Blockly.Blocks.trade = {
             marketField.setValue('');
             marketField.setValue(marketField.menuGenerator_[0][1]); // eslint-disable-line
         }
+
+        this.getField('TITLE').textElement_.removeAttribute('style');
+        // this.getField('TITLE').textElement_.style.fill = '#f0b90a !important';
+        Blockly.utils.addClass(this.getField('TITLE').textElement_, 'top-block-title');
 
         decorateTrade(ev);
     },
@@ -135,21 +142,40 @@ Blockly.JavaScript.trade = block => {
             : [contractTypeSelector];
     const timeMachineEnabled = block.getFieldValue('TIME_MACHINE_ENABLED') === 'TRUE';
     const shouldRestartOnError = block.getFieldValue('RESTARTONERROR') === 'TRUE';
+    const use5000 = block.getFieldValue('USE5000') === 'TRUE';
+    // BinaryBotPrivateVirtualSettings = {
+    //     token: '${block.getFieldValue('VIRTUAL_TOKEN')}',
+    //     ongoing: true,
+    //     valid: true,
+    //     changeToVirtual: false,
+    //     changeToReal: false,
+    //     steps: 0,
+    //     realSteps:0,
+    //     minTradesOnReal: ${block.getFieldValue('VIRTUAL_MINSTEPS')},
+    //     maxTradesOnReal: ${block.getFieldValue('VIRTUAL_MAXSTEPS')},
+    //     goBack: '${block.getFieldValue('VIRTUAL_GOBACK')}',
+    //     active: ${block.getFieldValue('VIRTUAL_ACTIVE') === 'enabled'},
+    //     maxSteps: ${block.getFieldValue('VIRTUAL_STEPS')},
+    //     reset: ${block.getFieldValue('VIRTUAL_RESET') === 'enabled'}
+    // }
     const code = `
-    BinaryBotPrivateInit = function BinaryBotPrivateInit() {
-      Bot.init('${account}', {
+${initialization.trim()}
+BinaryBotPrivateInit = function BinaryBotPrivateInit() {
+    Bot.init('${account}', {
         symbol: '${block.getFieldValue('SYMBOL_LIST')}',
         contractTypes: ${JSON.stringify(contractTypeList)},
         candleInterval: '${candleIntervalValue}',
         shouldRestartOnError: ${shouldRestartOnError},
         timeMachineEnabled: ${timeMachineEnabled},
-      });
-      ${initialization.trim()}
-    };
-    BinaryBotPrivateStart = function BinaryBotPrivateStart() {
-      ${tradeOptionsStatement.trim()}
-    };
-  `;
+        virtualTrades: BinaryBotPrivateVirtualSettings,
+        use5000: ${use5000}
+    });
+
+};
+
+BinaryBotPrivateStart = function BinaryBotPrivateStart() {
+    ${tradeOptionsStatement.trim()}
+};`;
     return code;
 };
 
@@ -157,3 +183,6 @@ export default () => {
     backwardCompatibility();
     tradeOptions();
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/trade/index.js

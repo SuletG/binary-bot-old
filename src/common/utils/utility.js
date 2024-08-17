@@ -65,6 +65,10 @@ export const moveToDeriv = async () => {
 
 export const getClientsCountryByIP = async () => {
     const api = generateLiveApiInstance();
-    const { website_status } = await api.send({ website_status: 1 });
+    // const { website_status } = await api.send({ website_status: 1 });
+    const { website_status } = await api.getWebsiteStatus();
     return website_status.clients_country;
 };
+
+// WEBPACK FOOTER //
+// ./src/common/utils/utility.js

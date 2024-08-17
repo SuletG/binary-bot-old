@@ -1,0 +1,102 @@
+
+@import '../colors.scss';
+.Input_input{
+    width:calc(100% - 0px);
+    height: 130px;
+    padding:10px;
+    border-radius: 4px;
+    outline: none;
+    border:1px rgb(200,200,200) solid;
+    background:white;
+    color:black;
+    font-family: $font;
+    font-size:14px;
+    resize:none;
+    transition: all 0.25s cubic-bezier(0.71, 0.03, 0.56, 0.85);
+    box-sizing: border-box !important;
+    margin-top:10px;
+    position: relative;
+    float:left;
+}
+.label{
+    display: flex;
+    // align-items: ;
+}
+.inputDisable{
+    opacity:0.5;
+}
+.Input_input:hover{
+    border:1px $main solid;
+}
+.Input_input:focus{
+    border:1px $main solid;
+    box-shadow: 0px 10px 12px -8px rgba(32, 56, 117, 0.45);
+}
+.Input_title{
+    color:var($color);
+    font-size:14px;
+    font-family: $font;
+    text-overflow: ellipsis;
+    overflow: hidden; 
+    font-weight: 400;
+    text-align: left;
+    position: relative;
+}
+.Input_invalid{
+    font-family: $font;
+    font-size:12px;
+    color:red;
+    position: relative;
+    float:left;
+    top:4px;
+}
+.Input_invalidInput{
+    color:red;
+}
+.Input_leftLabel{
+    display: flex;
+    transition:0.2s all;
+    flex-wrap: wrap;
+    position: relative;
+    font-size:12px;
+}
+.Input_leftLabel .Input_title {
+    width: $label-width;
+    font-size:12px;
+    color:$color;
+}
+.Input_leftLabel .Input_input{
+    width:calc(100% - #{$label-width});
+    background:$input-bg;
+    border:none;
+    font-size:12px;
+    color:$input-color;
+    padding:6px 8px;
+    margin-top:0px;
+}
+.Input_leftLabel .Input_input:hover, .Input_leftLabel .Input_input:focus {
+    background:$input-bg-hover;
+    color:white;
+}
+.Input_leftLabel_inputCurser input {
+    cursor: pointer;
+}
+.Input_search{
+    position: relative;
+    color:$input-color;
+}
+.Input_search .Input_input{
+    padding-left:30px;
+}
+.Input_input::placeholder{
+    color:$input-placeholder;
+}
+.Input_search_icon {
+    color:$input-color;
+    transition: all 0.25s cubic-bezier(0.71, 0.03, 0.56, 0.85);
+    position: absolute;
+    left:6px;
+}
+.Input_search:hover .Input_search_icon {
+    color:white;
+}

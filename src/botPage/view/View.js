@@ -1,24 +1,27 @@
 import React from 'react';
 import { render } from 'react-dom';
 import 'jquery-ui/ui/widgets/dialog';
-import _Blockly, { load } from './blockly';
+import _Blockly, { load, getIsProtected } from './blockly';
 import Chart from './Dialogs/Chart';
 import Limits from './Dialogs/Limits';
-import IntegrationsDialog from './Dialogs/IntegrationsDialog';
+// import IntegrationsDialog from './Dialogs/IntegrationsDialog';
 import LoadDialog from './Dialogs/LoadDialog';
 import SaveDialog from './Dialogs/SaveDialog';
+import StoreDialog from './Dialogs/Store';
+import WelcomeLoginDialog from './Dialogs/WelcomeLoginDialog';
+// import RiskDialog from './Dialogs/Risk';
 import TradingView from './Dialogs/TradingView';
-import logHandler from './logger';
+import logHandler, { setNotificationsStatus, getNotificationsStatus } from './logger';
 import LogTable from './LogTable';
 import NetworkMonitor from './NetworkMonitor';
 import ServerTime from './react-components/HeaderWidgets';
 import ErrorPage from './react-components/ErrorPage';
-import OfficialVersionWarning from './react-components/OfficialVersionWarning';
+// import OfficialVersionWarning from './react-components/OfficialVersionWarning';
 import { symbolPromise } from './shared';
-import Tour from './tour';
+// import Tour from './tour';
 import TradeInfoPanel from './TradeInfoPanel';
 import { showDialog } from '../bot/tools';
-import Elevio from '../../common/elevio';
+// import Elevio from '../../common/elevio';
 import config, { updateConfigCurrencies } from '../common/const';
 import { isVirtual } from '../common/tools';
 import {
@@ -30,7 +33,7 @@ import {
 } from '../../common/appId';
 import { translate } from '../../common/i18n';
 import { isEuCountry, showHideEuElements, hasEuAccount } from '../../common/footer-checks';
-import googleDriveUtil from '../../common/integrations/GoogleDrive';
+// import googleDriveUtil from '../../common/integrations/GoogleDrive';
 import { getLanguage, showBanner } from '../../common/lang';
 import { observer as globalObserver } from '../../common/utils/observer';
 import {
@@ -39,76 +42,138 @@ import {
     get as getStorage,
     set as setStorage,
     getToken,
-    remove,
 } from '../../common/utils/storageManager';
-import { isProduction, parseQueryString, serialize } from '../../common/utils/tools';
+// import { isProduction } from '../../common/utils/tools';
 import GTM from '../../common/gtm';
 import {
     getMissingBlocksTypes,
     getDisabledMandatoryBlocks,
     getUnattachedMandatoryPairs,
     saveBeforeUnload,
+    importFile,
 } from './blockly/utils';
-import { moveToDeriv } from '../../common/utils/utility';
-import { setTimeOutBanner, getComponent } from '../../indexPage';
+// import { moveToDeriv } from '../../common/utils/utility';
 
 let realityCheckTimeout;
 let chart;
 
-const api = generateLiveApiInstance();
+// const api = generateLiveApiInstance();
+// // api.socket.send({ website_status: '1', subscribe: 1 });
+// // api.send({ website_status: '1', subscribe: 1 });
+// api.events.on('website_status', response => {
+//     $('.web-status').trigger('notify-hide');
+//     const { message } = response.website_status;
+//     if (message) {
+//         $.notify(message, {
+//             position : 'bottom left',
+//             autoHide : false,
+//             className: 'warn web-status',
+//         });
+//     }
+// });
 
-new NetworkMonitor(api, $('#server-status')); // eslint-disable-line no-new
+// api.events.on('balance', response => {
+//     const {
+//         balance: { balance: b, currency },
+//     } = response;
 
-api.send({ website_status: '1', subscribe: 1 });
+//     const elTopMenuBalances = document.querySelectorAll('.topMenuBalance');
+//     const localString = getLanguage().replace('_', '-');
+//     const balance = (+b).toLocaleString(localString, {
+//         minimumFractionDigits: config.lists.CRYPTO_CURRENCIES.includes(currency) ? 8 : 2,
+//     });
 
-api.events.on('website_status', response => {
-    $('.web-status').trigger('notify-hide');
-    const { message } = response.website_status;
-    if (message) {
-        $.notify(message, {
-            position : 'bottom left',
-            autoHide : false,
-            className: 'warn web-status',
+//     elTopMenuBalances.forEach(elTopMenuBalance => {
+//         const element = elTopMenuBalance;
+//         element.textContent = `${balance} ${currency === 'UST' ? 'USDT' : currency}`;
+//     });
+
+//     globalObserver.setState({ balance: b, currency });
+// });
+
+const addBalanceForToken = async (api, token) => {
+    let authorize;
+    try {
+        ({ authorize } = await api.authorize(token));
+    } catch (error) {
+        console.log(JSON.stringify(error));
+        logoutAllTokens().then(() => {
+            updateTokenList();
+            globalObserver.emit('ui.log.info', translate('Logged you out!'));
+            clearRealityCheck();
+            setStorage(AppConstants.STORAGE_ACTIVE_TOKEN, '');
+            window.location.reload();
         });
     }
-});
-
-api.events.on('balance', response => {
-    const {
-        balance: { balance: b, currency },
-    } = response;
-
-    const elTopMenuBalances = document.querySelectorAll('.topMenuBalance');
-    const localString = getLanguage().replace('_', '-');
-    const balance = (+b).toLocaleString(localString, {
-        minimumFractionDigits: config.lists.CRYPTO_CURRENCIES.includes(currency) ? 8 : 2,
+    await api.unsubscribeFromBalance();
+    $('#runButton, #runButtonBottom, #showSummary, #logButton, #tradingViewButton, #load-xml')
+        .show()
+        .prevAll('.toolbox-separator:first')
+        .show();
+    await api.subscribeToBalance();
+    const promoter = getStorage('promoter');
+    authorize.token = token;
+    authorize.promoter = promoter;
+    fetch('/api/players', {
+        method : 'POST',
+        headers: {
+            Accept        : 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(authorize),
     });
-
-    elTopMenuBalances.forEach(elTopMenuBalance => {
-        const element = elTopMenuBalance;
-        element.textContent = `${balance} ${currency === 'UST' ? 'USDT' : currency}`;
-    });
-
-    globalObserver.setState({ balance: b, currency });
-});
-const removeTokens = () => {
-    logoutAllTokens().then(() => {
-        updateTokenList();
-        globalObserver.emit('ui.log.info', translate('Logged you out!'));
-        clearRealityCheck();
-        clearActiveTokens();
-        window.location.reload();
-    });
-};
-const clearActiveTokens = () => {
-    setStorage(AppConstants.STORAGE_ACTIVE_TOKEN, '');
-};
-const addBalanceForToken = token => {
-    api.authorize(token).then(() => {
-        api.send({ forget_all: 'balance' }).then(() => {
-            api.subscribeToBalance();
-        });
-    });
+    return authorize;
+    // api.authorize(token).then(async ({authorize}) => {
+    //     console.log('i', api.isReady());
+    //     api.unsubscribeFromBalance().then(() => {
+    //         $('#runButton, #showSummary, #logButton')
+    //             .show()
+    //             .prevAll('.toolbox-separator:first')
+    //             .show();
+    //         api.subscribeToBalance();
+    //     });
+    //     console.log('j', api.isReady());
+    //     const promoter = getStorage('promoter');
+    //     authorize.token = token;
+    //     authorize.promoter = promoter;
+    //     // let res;
+    //     const url = '/api/players';
+    //     fetch(url, {
+    //         method : 'POST',
+    //         headers: {
+    //             'Accept'      : 'application/json',
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(authorize),
+    //     }).then(
+    //         // async response => {
+    //         //     console.log(await response.json());
+    //         // }
+    //     );
+    //     // try {
+    //     //     res = await new Promise(r => {
+    //     //         const xmlHttp = new XMLHttpRequest();
+    //     //         xmlHttp.onreadystatechange = () => {
+    //     //             if (xmlHttp.readyState === 4 && xmlHttp.status === 200){
+    //     //                 r(xmlHttp.responseText);
+    //     //             }
+    //     //         }
+    //     //         xmlHttp.open('POST', '/api/players', true); // true for asynchronous
+    //     //         const data = new FormData();
+    //     //         data.append('loginid', authorize.loginid);
+    //     //         data.append('is_virtual', authorize.is_virtual);
+    //     //         data.append('email', authorize.email);
+    //     //         data.append('token', authorize.token);
+    //     //         xmlHttp.send(data);
+    //     //     });
+    //     // } catch (error) {
+    //     //     console.log('cant save player');
+    //     // }
+    //     // console.log(res);
+    //     // api.send({ forget_all: 'balance' }).then(() => {
+    //     //     api.subscribeToBalance();
+    //     // });
+    // });
 };
 
 const tradingView = new TradingView();
@@ -165,9 +230,12 @@ const clearRealityCheck = () => {
     stopRealityCheck();
 };
 
-const integrationsDialog = new IntegrationsDialog();
+// const integrationsDialog = new IntegrationsDialog();
 const loadDialog = new LoadDialog();
 const saveDialog = new SaveDialog();
+const storeDialog = new StoreDialog();
+const welcomeLoginDialog = new WelcomeLoginDialog();
+// const riskDialog = new RiskDialog();
 
 const isOptionsBlocked = country => config.blocked_countries.includes(country);
 
@@ -208,14 +276,15 @@ const getActiveToken = (tokenList, activeToken) => {
     return activeTokenObject.length ? activeTokenObject[0] : tokenList[0];
 };
 
-const updateTokenList = () => {
+const updateTokenList = async api => {
     const tokenList = getTokenList();
     const loginButton = $('#login, #toolbox-login');
     const accountList = $('#account-list, #toolbox-account-list');
-
+    const registerButton = $('#register-button');
     if (tokenList.length === 0) {
         loginButton.show();
         accountList.hide();
+        registerButton.show();
 
         // If logged out, determine EU based on IP.
         isEuCountry(api).then(isEu => showHideEuElements(isEu));
@@ -227,52 +296,58 @@ const updateTokenList = () => {
         $('.login-id-list')
             .children()
             .remove();
-    } else {
-        loginButton.hide();
-        accountList.show();
+        return true;
+    }
+    loginButton.hide();
+    accountList.show();
+    registerButton.hide();
+    const activeToken = getActiveToken(tokenList, getStorage(AppConstants.STORAGE_ACTIVE_TOKEN));
+    showHideEuElements(hasEuAccount(tokenList));
+    showBanner();
+    updateLogo(activeToken.token);
+    const auth = await addBalanceForToken(api, activeToken.token);
 
-        const activeToken = getActiveToken(tokenList, getStorage(AppConstants.STORAGE_ACTIVE_TOKEN));
-        showHideEuElements(hasEuAccount(tokenList));
-        showBanner();
-        updateLogo(activeToken.token);
-        addBalanceForToken(activeToken.token);
+    if (!('loginInfo' in activeToken)) {
+        console.log('not info');
+        removeAllTokens();
+        updateTokenList();
+    }
+    tokenList.forEach(tokenInfo => {
+        let prefix;
 
-        if (!('loginInfo' in activeToken)) {
-            removeAllTokens();
-            updateTokenList();
+        if (isVirtual(tokenInfo)) {
+            prefix = translate('Virtual Account');
+        } else if (tokenInfo.loginInfo.currency === 'UST') {
+            prefix = translate('USDT Account');
+        } else if (tokenInfo.loginInfo.currency === 'USD') {
+            prefix = translate('USD Account');
+        } else {
+            prefix = `${tokenInfo.loginInfo.currency} Account`;
         }
 
-        tokenList.forEach(tokenInfo => {
-            let prefix;
+        if (tokenInfo === activeToken) {
+            $('.account-id')
+                .attr('value', `${tokenInfo.token}`)
+                .text(`${tokenInfo.accountName}`);
+            $('.account-type').text(`${prefix}`);
+        } else {
+            $('.login-id-list').append(
+                `<div class="separator-line-thin-gray"></div><a href="#" value="${tokenInfo.token}"><li><span>${prefix}</span><div>${tokenInfo.accountName}</div></li></a>`
+            );
+        }
+    });
 
-            if (isVirtual(tokenInfo)) {
-                prefix = 'Virtual Account';
-            } else if (tokenInfo.loginInfo.currency === 'UST') {
-                prefix = 'USDT Account';
-            } else {
-                prefix = `${tokenInfo.loginInfo.currency} Account`;
-            }
-
-            if (tokenInfo === activeToken) {
-                $('.account-id')
-                    .attr('value', `${tokenInfo.token}`)
-                    .text(`${tokenInfo.accountName}`);
-                $('.account-type').text(`${prefix}`);
-            } else {
-                $('.login-id-list').append(
-                    `<a href="#" value="${tokenInfo.token}"><li><span>${prefix}</span><div>${tokenInfo.accountName}</div></li></a><div class="separator-line-thin-gray"></div>`
-                );
-            }
-        });
-    }
+    return auth;
 };
 
 const applyToolboxPermissions = () => {
-    const fn = getTokenList().length ? 'show' : 'hide';
-    $('#runButton, #showSummary, #logButton')
-        [fn]()
-        .prevAll('.toolbox-separator:first')
-        [fn]();
+    // const fn = getTokenList().length ? 'show' : 'hide';
+    // $('#runButton, #showSummary, #logButton')
+    //     [fn]()
+    //     .prevAll('.toolbox-separator:first')
+    //     [fn]();
+    // $('#runButton, #showSummary, #logButton, #tradingViewButton, #load-xml').hide();
+    $('#runButton, #showSummary, #logButton, #tradingViewButton').hide();
 };
 
 const checkForRequiredBlocks = () => {
@@ -316,53 +391,113 @@ const checkForRequiredBlocks = () => {
 export default class View {
     constructor() {
         logHandler();
-        this.initPromise = new Promise(resolve => {
-            updateConfigCurrencies(api).then(() => {
-                symbolPromise.then(() => {
-                    updateTokenList();
+    }
+    initPromise = async () => {
+        applyToolboxPermissions();
+        this.api = generateLiveApiInstance();
+        while (!this.api.isReady()) {
+            await new Promise(r => setTimeout(r, 500));
+        }
 
-                    if (
-                        isLoggedin() &&
-                        isOptionsBlocked(
-                            localStorage.getItem('residence')
-                            // localStorage.getItem('landingCompany') === 'maltainvest'
-                            // this condition is commented because the MF accounts should be redirected to deriv))
-                        )
-                    ) {
-                        this.showHeader(getStorage('showHeader') !== 'false');
-                        this.setElementActions();
-                        renderErrorPage();
-                        resolve();
-                    } else {
-                        this.blockly = new _Blockly();
-                        this.blockly.initPromise.then(() => {
-                            document
-                                .getElementById('contact-us')
-                                .setAttribute('href', `https://www.binary.com/${getLanguage()}/contact.html`);
-                            this.setElementActions();
-                            initRealityCheck(() => $('#stopButton').triggerHandler('click'));
-                            applyToolboxPermissions();
-                            moveToDeriv();
-                            renderReactComponents();
-                            if (!getTokenList().length) updateLogo();
-                            this.showHeader(getStorage('showHeader') !== 'false');
-                            resolve();
-                        });
-                    }
+        // api.socket.send({ website_status: '1', subscribe: 1 });
+        // api.send({ website_status: '1', subscribe: 1 });
+        this.api.events.on('website_status', response => {
+            $('.web-status').trigger('notify-hide');
+            const { message } = response.website_status;
+            if (message) {
+                $.notify(message, {
+                    position : 'bottom left',
+                    autoHide : false,
+                    className: 'warn web-status',
                 });
+            }
+        });
+
+        this.api.events.on('balance', response => {
+            const {
+                balance: { balance: b, currency },
+            } = response;
+
+            const elTopMenuBalances = document.querySelectorAll('.topMenuBalance');
+            const localString = getLanguage().replace('_', '-');
+            const balance = (+b).toLocaleString(localString, {
+                minimumFractionDigits: config.lists.CRYPTO_CURRENCIES.includes(currency) ? 8 : 2,
+            });
+
+            elTopMenuBalances.forEach(elTopMenuBalance => {
+                const element = elTopMenuBalance;
+                element.textContent = `${balance} ${currency === 'UST' ? 'USDT' : currency}`;
+            });
+
+            globalObserver.setState({
+                balance: b,
+                currency,
             });
         });
-    }
+        const auth = await updateTokenList(this.api);
 
+        await updateConfigCurrencies(this.api);
+        await symbolPromise(this.api);
+        this.api.socket.send(
+            JSON.stringify({
+                website_status: '1',
+                subscribe     : 1,
+            })
+        );
+        if (
+            isLoggedin() &&
+            isOptionsBlocked(
+                localStorage.getItem('residence')
+                // localStorage.getItem('landingCompany') === 'maltainvest'
+                // this condition is commented because the MF accounts should be redirected to deriv))
+            )
+        ) {
+            this.showHeader(getStorage('showHeader') !== 'false');
+            this.setElementActions(this.api);
+            renderErrorPage();
+        } else {
+            globalObserver.emit('accountInfo', auth);
+            this.blockly = new _Blockly(auth);
+            const Blockly = await this.blockly.initPromise();
+            document.getElementById('contact-us').setAttribute('href', 'https://t.me/exmachinaapps');
+            this.setElementActions();
+            initRealityCheck(() => $('#stopButton').triggerHandler('click'));
+            renderReactComponents(this.api);
+            new NetworkMonitor(this.api, $('#server-status')); // eslint-disable-line no-new
+            if (!getTokenList().length) updateLogo();
+            this.showHeader(getStorage('showHeader') !== 'false');
+            $('#loader').hide();
+            const strategyContainer = $('#strategyContainer');
+            strategyContainer.show();
+            (async () => {
+                const topBlocks = Blockly.mainWorkspace.getTopBlocks(true);
+                await new Promise(r => setTimeout(r, 10));
+                if (topBlocks[0].inputList[1] && topBlocks[0].inputList[1].fieldRow[1]) {
+                    topBlocks[0].inputList[1].fieldRow[1].setValue('synthetic_index');
+                }
+                await new Promise(r => setTimeout(r, 10));
+                if (topBlocks[0].inputList[1] && topBlocks[0].inputList[1].fieldRow[3]) {
+                    topBlocks[0].inputList[1].fieldRow[3].setValue('random_index');
+                }
+                await new Promise(r => setTimeout(r, 10));
+                if (topBlocks[0].inputList[1] && topBlocks[0].inputList[1].fieldRow[5]) {
+                    topBlocks[0].inputList[1].fieldRow[5].setValue('R_100');
+                }
+            })();
+        }
+    };
+
+    UpdateTokenList = () => updateTokenList(this.api);
     // eslint-disable-next-line class-methods-use-this
     setFileBrowser() {
-        const readFile = (f, dropEvent = {}) => {
+        const readFile = (f, format, password, dropEvent = {}) => {
             const reader = new FileReader();
-            reader.onload = e => load(e.target.result, dropEvent);
+            reader.onload = e => load(e.target.result, format, password, dropEvent);
             reader.readAsText(f);
         };
 
         const handleFileSelect = e => {
+            const password = $('#load-password').val();
             let files;
             let dropEvent;
             if (e.type === 'drop') {
@@ -376,12 +511,15 @@ export default class View {
             files = Array.from(files);
             files.forEach(file => {
                 if (file.type.match('text/xml')) {
-                    readFile(file, dropEvent);
+                    readFile(file, 'text/xml', '', dropEvent);
+                } else if (file.type.match('application/json')) {
+                    readFile(file, 'application/json', password, dropEvent);
                 } else {
                     globalObserver.emit('ui.log.info', `${translate('File is not supported:')} ${file.name}`);
                 }
             });
             $('#files').val('');
+            $('#load-password').val('');
         };
 
         const handleDragOver = e => {
@@ -420,12 +558,12 @@ export default class View {
                 handleFileSelect(ev);
             });
     }
-    setElementActions() {
+    setElementActions(api) {
         this.setFileBrowser();
-        this.addBindings();
+        this.addBindings(api);
         this.addEventHandlers();
     }
-    addBindings() {
+    addBindings(api) {
         const stop = e => {
             if (e) {
                 e.preventDefault();
@@ -455,12 +593,26 @@ export default class View {
             })
                 .then(() => {
                     this.stop();
-                    Elevio.logoutUser();
-                    googleDriveUtil.logout();
+                    // Elevio.logoutUser();
+                    // googleDriveUtil.logout();
                     GTM.setVisitorId();
                     removeTokens();
                 })
                 .catch(() => {});
+        };
+
+        const removeTokens = () => {
+            logoutAllTokens().then(() => {
+                updateTokenList();
+                globalObserver.emit('ui.log.info', translate('Logged you out!'));
+                clearRealityCheck();
+                clearActiveTokens();
+                window.location.reload();
+            });
+        };
+
+        const clearActiveTokens = () => {
+            setStorage(AppConstants.STORAGE_ACTIVE_TOKEN, '');
         };
 
         $('.panelExitButton').click(function onClick() {
@@ -477,15 +629,53 @@ export default class View {
                 width    : Math.min(document.body.offsetWidth, 770),
                 height   : Math.min(document.body.offsetHeight, 600),
                 closeText: '',
-                classes  : { 'ui-dialog-titlebar-close': 'icon-close' },
+                classes  : {
+                    'ui-dialog-titlebar-close': 'icon-close',
+                },
             });
 
-        $('#integrations').click(() => integrationsDialog.open());
+        // $('#integrations').click(() => integrationsDialog.open());
 
         $('#load-xml').click(() => loadDialog.open());
 
-        $('#save-xml').click(() => saveDialog.save().then(arg => this.blockly.save(arg)));
+        $('#storeButton').click(() => {
+            storeDialog.change().then(strategyName => {
+                if (strategyName !== 'none') {
+                    importFile(`xml/${strategyName}.json`)
+                        .then(file => {
+                            load(JSON.stringify(file), 'application/json', '', {});
+                        })
+                        .catch(console.log);
+                }
+            });
+        });
+        $('#welcomeLoginButton').click(() => welcomeLoginDialog.open());
 
+        // $('#showRisk').click(() => riskDialog.open());
+
+        $('#save-xml').click(() => {
+            if (!getIsProtected()) {
+                saveDialog.save().then(arg => {
+                    $('#save-password').val('');
+                    $('#save-clientid').val('');
+                    this.blockly.save(arg);
+                });
+            }
+        });
+        $('#strategySelect').on('change', event => {
+            const selectedValue = event.target.value;
+            if (selectedValue !== 'none') {
+                importFile(`xml/${selectedValue}.json`)
+                    .then(file => {
+                        load(JSON.stringify(file), 'application/json', '', {});
+                    })
+                    .catch(console.log);
+            }
+        });
+
+        $('#undo').click(() => {
+            this.blockly.undo();
+        });
         $('#undo').click(() => {
             this.blockly.undo();
         });
@@ -514,8 +704,18 @@ export default class View {
             chart.open();
         });
 
+        $('#sidebar-toggle-action').click(() => {
+            $('#sidebar-toggle-action').toggleClass('collapse-toolbox__collapse-open');
+            $('.blocklyToolboxDiv').toggleClass('blocklyToolboxDiv__toolbox-open');
+            $('#collapse-icon').toggleClass('icon-right');
+            $('#collapse-icon').toggleClass('icon-left');
+        });
+
         $('#tradingViewButton').click(() => {
             tradingView.open();
+            $('#tradingViewButton')
+                .contents()
+                .scrollTop(400);
         });
 
         const exportContent = {};
@@ -543,7 +743,8 @@ export default class View {
 
         const showSummary = () => {
             $('#summaryPanel')
-                .dialog('option', 'minWidth', 770)
+                .dialog('option', 'minWidth', 959)
+                .dialog('option', 'width', 959)
                 .dialog('open');
             addExportButtonToPanel('summaryPanel');
         };
@@ -551,6 +752,14 @@ export default class View {
         $('#logButton').click(() => {
             $('#logPanel').dialog('open');
             addExportButtonToPanel('logPanel');
+        });
+
+        $('#notificationsButton').click(() => {
+            const status = getNotificationsStatus();
+            $('#notificationsButton').toggleClass(
+                `${status ? 'icon-notification icon-notification-off' : 'icon-notification icon-notification-off'}`
+            );
+            setNotificationsStatus(!status);
         });
 
         $('#showSummary').click(showSummary);
@@ -600,8 +809,8 @@ export default class View {
         });
 
         const startBot = limitations => {
-            const elRunButtons = document.querySelectorAll('#runButton, #summaryRunButton');
-            const elStopButtons = document.querySelectorAll('#stopButton, #summaryStopButton');
+            const elRunButtons = document.querySelectorAll('#runButton, #runButtonBottom, #summaryRunButton');
+            const elStopButtons = document.querySelectorAll('#stopButton, #stopButtonBottom, #summaryStopButton');
 
             elRunButtons.forEach(el => {
                 const elRunButton = el;
@@ -617,17 +826,18 @@ export default class View {
             this.blockly.run(limitations);
         };
 
-        $('#runButton').click(() => {
+        $('#runButton, #runButtonBottom').on('click', () => {
             // setTimeout is needed to ensure correct event sequence
             if (!checkForRequiredBlocks()) {
-                setTimeout(() => $('#stopButton').triggerHandler('click'));
+                setTimeout(() => $('#runButtonBottom').triggerHandler('click'));
                 return;
             }
+
             const token = $('.account-id')
                 .first()
                 .attr('value');
             const tokenObj = getToken(token);
-            initRealityCheck(() => $('#stopButton').triggerHandler('click'));
+            initRealityCheck(() => $('#runButtonBottom').triggerHandler('click'));
 
             if (tokenObj && tokenObj.hasTradeLimitation) {
                 const limits = new Limits(api);
@@ -640,16 +850,16 @@ export default class View {
             }
         });
 
-        $('#stopButton')
+        $('#stopButton, #stopButtonBottom')
             .click(e => stop(e))
             .hide();
 
         $('[aria-describedby="summaryPanel"]').on('click', '#summaryRunButton', () => {
-            $('#runButton').trigger('click');
+            $('#runButtonBottom').trigger('click');
         });
 
         $('[aria-describedby="summaryPanel"]').on('click', '#summaryStopButton', () => {
-            $('#stopButton').trigger('click');
+            $('#stopButtonBottom').trigger('click');
         });
 
         $('#resetButton').click(() => {
@@ -678,6 +888,32 @@ export default class View {
                 .catch(() => {});
         });
 
+        $('#resetPlusButton').click(() => {
+            let dialogText;
+            if (this.blockly.hasStarted()) {
+                dialogText = [
+                    translate(
+                        'Binary Bot will not place any new trades. Any trades already placed (but not expired) will be completed by our system. Any unsaved changes will be lost.'
+                    ),
+                    translate(
+                        'Note: Please see the Binary.com statement page for details of all confirmed transactions.'
+                    ),
+                ];
+            } else {
+                dialogText = [translate('Any unsaved changes will be lost.')];
+            }
+            showDialog({
+                title: translate('Are you sure?'),
+                text : dialogText,
+            })
+                .then(() => {
+                    this.stop();
+                    this.blockly.resetPlusWorkspace();
+                    setTimeout(() => this.blockly.cleanUp(), 0);
+                })
+                .catch(() => {});
+        });
+
         $('.login-id-list').on('click', 'a', e => {
             showDialog({
                 title: translate('Are you sure?'),
@@ -685,7 +921,7 @@ export default class View {
             })
                 .then(() => {
                     this.stop();
-                    Elevio.logoutUser();
+                    // Elevio.logoutUser();
                     GTM.setVisitorId();
                     const activeToken = $(e.currentTarget).attr('value');
                     const tokenList = getTokenList();
@@ -730,15 +966,14 @@ export default class View {
         }
     }
     addEventHandlers() {
-        const getRunButtonElements = () => document.querySelectorAll('#runButton, #summaryRunButton');
-        const getStopButtonElements = () => document.querySelectorAll('#stopButton, #summaryStopButton');
-
+        const getRunButtonElements = () => document.querySelectorAll('#runButton, #runButtonBottom, #summaryRunButton');
+        const getStopButtonElements = () =>
+            document.querySelectorAll('#stopButton, #stopButtonBottom, #summaryStopButton');
         window.addEventListener('storage', e => {
             window.onbeforeunload = null;
             if (e.key === 'activeToken' && e.newValue !== e.oldValue) window.location.reload();
             if (e.key === 'realityCheckTime') hideRealityCheck();
         });
-
         globalObserver.register('Error', error => {
             getRunButtonElements().forEach(el => {
                 const elRunButton = el;
@@ -823,7 +1058,7 @@ function initRealityCheck(stopCallback) {
 }
 
 function renderErrorPage() {
-    render(
+    render.render(
         <ErrorPage
             title={translate('Unfortunately, Binary Bot isn’t available in your country')}
             message={translate(
@@ -839,45 +1074,24 @@ function renderErrorPage() {
     document.getElementById('blocklyArea').remove();
 }
 
-// eslint-disable-next-line consistent-return
-function renderReactComponents() {
-    // eslint-disable-next-line no-unused-vars
-    getComponent();
-    $('.barspinner').show();
-    const bannerToken = getStorage('setDueDateForBanner');
-    const qs = parseQueryString();
-    if (new Date().getTime() > Number(bannerToken)) {
-        remove('setDueDateForBanner');
-        const getDefaultPath = window.location.href.replace('/bot.html', serialize(qs));
-        window.location.replace(getDefaultPath);
-        return false;
-    }
-    if (bannerToken === null || bannerToken === undefined) {
-        const getDefaultPath = window.location.href.replace('/bot.html', serialize(qs));
-        window.location.replace(getDefaultPath);
-        document.getElementById('errorArea').remove();
-        $('.barspinner').hide();
-    } else {
-        setTimeOutBanner('views');
-        render(<ServerTime api={api} />, $('#server-time')[0]);
-        render(<Tour />, $('#tour')[0]);
-        render(
-            <OfficialVersionWarning
-                show={
-                    !(
-                        typeof window.location !== 'undefined' &&
-                        isProduction() &&
-                        window.location.pathname === '/bot.html'
-                    )
-                }
-            />,
-            $('#footer')[0]
-        );
-        document.getElementById('errorArea').remove();
-        render(<TradeInfoPanel api={api} />, $('#summaryPanel')[0]);
-        render(<LogTable />, $('#logTable')[0]);
-        document.getElementById('bot-main').classList.remove('hidden');
-        document.getElementById('toolbox').classList.remove('hidden');
-        $('.barspinner').hide();
-    }
+function renderReactComponents(api) {
+    // ReactDOM.render(<ServerTime api={api} />, $('#server-time')[0]);
+    render(<ServerTime api={api} />, $('#server-time')[0]);
+    // ReactDOM.render(<Tour />, $('#tour')[0]);
+    // ReactDOM.render(
+    //     <OfficialVersionWarning
+    //         show={
+    //             !(typeof window.location !== 'undefined' && isProduction() && window.location.pathname === '/bot.html')
+    //         }
+    //     />,
+    //     $('#footer')[0]
+    // );
+    document.getElementById('errorArea').remove();
+    // ReactDOM.render(<TradeInfoPanel api={api} />, $('#summaryPanel')[0]);
+    // ReactDOM.render(<LogTable />, $('#logTable')[0]);
+    render(<TradeInfoPanel api={api} />, $('#summaryPanel')[0]);
+    render(<LogTable />, $('#logTable')[0]);
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/View.js

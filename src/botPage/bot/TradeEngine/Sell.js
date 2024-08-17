@@ -64,3 +64,6 @@ export default Engine =>
             ).then(onSuccess);
         }
     };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/Sell.js

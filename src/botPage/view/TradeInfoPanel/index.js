@@ -41,20 +41,26 @@ class AnimateTrade extends Component {
             stopMessage     : this.indicatorMessages.stopped,
         };
     }
-    componentWillMount() {
+    componentDidMount() {
         const resetSummary = () => {
             resetAnimation();
-            this.setState({ indicatorMessage: this.indicatorMessages.notRunning });
+            this.setState({
+                indicatorMessage: this.indicatorMessages.notRunning,
+            });
         };
         globalObserver.register('reset_animation', resetSummary);
         globalObserver.register('summary.clear', resetSummary);
         globalObserver.register('bot.running', () => {
             $('.stage-tooltip.top:eq(0)').addClass('running');
-            this.setState({ indicatorMessage: this.indicatorMessages.running });
+            this.setState({
+                indicatorMessage: this.indicatorMessages.running,
+            });
         });
         globalObserver.register('bot.stop', () => {
             $('.stage-tooltip.top:eq(0)').removeClass('running');
-            this.setState({ indicatorMessage: this.indicatorMessages.stopped });
+            this.setState({
+                indicatorMessage: this.indicatorMessages.stopped,
+            });
         });
         $('#stopButton').click(() => {
             $('.stage-tooltip.top:eq(0)').removeClass('running');
@@ -67,8 +73,9 @@ class AnimateTrade extends Component {
         $('#runButton').click(() => {
             resetAnimation();
             $('.stage-tooltip.top:eq(0)').addClass('running');
-            this.setState({ indicatorMessage: this.indicatorMessages.starting });
-            globalObserver.setState({ isRunning: true });
+            this.setState({
+                indicatorMessage: this.indicatorMessages.starting,
+            });
             globalObserver.emit('summary.disable_clear');
             globalObserver.register('contract.status', contractStatus => this.animateStage(contractStatus));
         });
@@ -86,11 +93,15 @@ class AnimateTrade extends Component {
         } else if (contractStatus.id === 'contract.purchase_recieved') {
             $('.line').addClass('active');
             activateStage(1);
-            this.setState({ buy_id: contractStatus.data });
+            this.setState({
+                buy_id: contractStatus.data,
+            });
         } else if (contractStatus.id === 'contract.sold') {
             $('.line').addClass('complete');
             activateStage(2);
-            this.setState({ sell_id: contractStatus.data });
+            this.setState({
+                sell_id: contractStatus.data,
+            });
         }
 
         activateStage(contractStatus.id);
@@ -100,51 +111,54 @@ class AnimateTrade extends Component {
             <div>
                 <div id="current-trade-status">
                     <span className="stage">
-                        <div className="stage-label">{translate('Attempting to Buy')}</div>
+                        <div className="stage-label"> {translate('Attempting to Buy')} </div>{' '}
                         <span className="circle-wrapper">
                             <span className="static-circle" />
                             <span className="dynamic-circle" />
                             <div className="line">
                                 <div className="progress-bar" />
-                            </div>
-                        </span>
+                            </div>{' '}
+                        </span>{' '}
                         <div className="stage-tooltip bottom">
                             <div className="triangle" />
                             <p>
-                                {translate('Buy amount')}: {this.state.buy_price || 0}
-                            </p>
-                        </div>
-                    </span>
+                                {' '}
+                                {translate('Buy amount')}: {this.state.buy_price || 0}{' '}
+                            </p>{' '}
+                        </div>{' '}
+                    </span>{' '}
                     <span className="stage">
                         <div className="stage-tooltip top active">
-                            <p>{this.state.indicatorMessage}</p>
-                        </div>
-                        <div className="stage-label">{translate('Buy succeeded')}</div>
+                            <p> {this.state.indicatorMessage} </p>{' '}
+                        </div>{' '}
+                        <div className="stage-label"> {translate('Buy succeeded')} </div>{' '}
                         <span className="circle-wrapper">
                             <span className="static-circle" />
                             <span className="dynamic-circle" />
-                        </span>
+                        </span>{' '}
                         <div className="stage-tooltip bottom">
                             <div className="triangle" />
                             <p>
-                                {translate('ID')}: {this.state.buy_id || ''}
-                            </p>
-                        </div>
-                    </span>
+                                {' '}
+                                {translate('ID')}: {this.state.buy_id || ''}{' '}
+                            </p>{' '}
+                        </div>{' '}
+                    </span>{' '}
                     <span className="stage">
-                        <div className="stage-label">{translate('Contract closed')}</div>
+                        <div className="stage-label"> {translate('Contract closed')} </div>{' '}
                         <span className="circle-wrapper">
                             <span className="static-circle" />
                             <span className="dynamic-circle" />
-                        </span>
+                        </span>{' '}
                         <div className="stage-tooltip bottom">
                             <div className="triangle" />
                             <p>
-                                {translate('ID')}: {this.state.sell_id || ''}
-                            </p>
-                        </div>
-                    </span>
-                </div>
+                                {' '}
+                                {translate('ID')}: {this.state.sell_id || ''}{' '}
+                            </p>{' '}
+                        </div>{' '}
+                    </span>{' '}
+                </div>{' '}
             </div>
         );
     }
@@ -153,23 +167,32 @@ class AnimateTrade extends Component {
 export default class TradeInfoPanel extends Component {
     constructor() {
         super();
-        this.state = { accountID: '', accountIDList: [], currentAccountID: '' };
+        this.state = {
+            accountID       : '',
+            accountIDList   : [],
+            currentAccountID: '',
+        };
     }
-    componentWillMount() {
+    componentDidMount() {
         globalObserver.register('bot.info', ({ accountID }) => {
             const { accountIDList } = this.state;
             if (!accountIDList.includes(accountID)) {
-                this.setState({ accountIDList: [...accountIDList, accountID] });
+                this.setState({
+                    accountIDList: [...accountIDList, accountID],
+                });
             }
             if (!this.state.accountID) {
-                this.setState({ accountID });
+                this.setState({
+                    accountID,
+                });
             }
-            this.setState({ currentAccountID: accountID });
+            this.setState({
+                currentAccountID: accountID,
+            });
         });
     }
     render() {
         const { accountID } = this.state;
-
         return (
             <div>
                 <div className="content">
@@ -177,26 +200,30 @@ export default class TradeInfoPanel extends Component {
                         <div className="summary-toolbox">
                             <RunButton />
                             <ClearButton />
-                        </div>
-                    </div>
+                        </div>{' '}
+                    </div>{' '}
                     <div className="content-row">
                         <AnimateTrade />
-                    </div>
+                    </div>{' '}
                     <div className="content-row">
-                        <TradeTable accountID={accountID} api={this.props.api} />
-                    </div>
+                        <TradeTable accountID={accountID} api={this.props.api} />{' '}
+                    </div>{' '}
                     <div className="content-row">
-                        <Summary accountID={accountID} />
-                    </div>
+                        <Summary accountID={accountID} />{' '}
+                    </div>{' '}
                     <div>
                         <p id="sync-warning">
+                            {' '}
                             {translate(
                                 'Stopping the bot will prevent further trades. Any ongoing trades will be completed by our system. Please be aware that some completed transactions may not be displayed in the table if the bot is stopped while placing trades. You may refer to the Binary.com statement page for details of all completed transactions.'
-                            )}
-                        </p>
-                    </div>
-                </div>
+                            )}{' '}
+                        </p>{' '}
+                    </div>{' '}
+                </div>{' '}
             </div>
         );
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/TradeInfoPanel/index.js

@@ -1,0 +1,32 @@
+@import '../../colors.scss';
+
+.CanvasComponents {
+    width: 100%;
+    z-index: 3;
+}
+.wrapper {
+    max-height:100%;
+    overflow:scroll;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-evenly;
+    padding:10px;
+}
+.wrapperOneChilde{
+    justify-content: flex-start;
+    margin-left: 22px;
+}
+.emptyText{
+    font-size:14px;
+    color:$color;
+    text-align: center;
+}
+.title{
+    font-weight: bold;
+    color:white;
+    font-size:16px;
+    margin-top:20px;
+    margin-bottom:10px;
+    margin-left:30px;
+}

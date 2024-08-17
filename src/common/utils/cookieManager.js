@@ -59,3 +59,6 @@ export const setCookieLanguage = lang => {
         cookie.write(lang.toUpperCase(), undefined, true, 'none');
     }
 };
+
+// WEBPACK FOOTER //
+// ./src/common/utils/cookieManager.js

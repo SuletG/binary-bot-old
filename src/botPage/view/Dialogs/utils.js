@@ -1,8 +1,7 @@
 import React from 'react';
 
 export const SAVE_LOAD_TYPE = {
-    local       : 'local',
-    google_drive: 'google-drive',
+    local: 'local',
 };
 
 export const useIsMounted = () => {
@@ -18,3 +17,6 @@ export const useIsMounted = () => {
 
     return React.useCallback(() => isMounted.current, []);
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/Dialogs/utils.js

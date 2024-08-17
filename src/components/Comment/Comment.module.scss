@@ -1,0 +1,107 @@
+@import '../colors.scss';
+/* .comment:hover .Comment_deleteButton{
+    opacity: 1;
+} */
+.Comment_separator { 
+    width:100%;
+    height:1px;
+    background:rgb(245,245,245);
+    margin:10px 0px;
+}
+.Comment_title{
+    font-weight: bold;
+    color:#515D72;
+    font-family: $font;
+    font-size:12px;
+}
+.Comment_buttons{
+    display: flex;
+    position: absolute;
+    top:8px;
+    right:0px;
+}
+.Comment_button:hover{
+    color:white;
+}
+.Comment_buttons svg{
+    width:14px;
+    height:14px;
+}
+/* .Comment_deleteButton{
+    transition:0.2s all;
+    opacity: 0;
+} */
+.Comment_button{
+    color:$input-color;
+    transition:0.2s all;
+    cursor: pointer;
+    font-size:14px;
+    margin-right:8px;
+}
+.Comment_textarea{
+    width:100%;
+    height: auto;
+    background:none;
+    min-height: auto;
+    background:none;
+    resize: none;
+    font-weight: bold;
+    font-family: $font;
+    font-size:12px;
+    color:var($color);
+    border-radius: 4px;
+    border:1px white solid;
+    transition:0.2s all;
+    box-sizing: border-box;
+    padding:3px;
+    margin-top:10px;
+    box-sizing: border-box;
+    outline: none;
+}
+.Comment_textarea::placeholder{
+    color:rgb(200,200,200);
+}
+.Comment_textarea:hover{
+    border:1px rgb(208, 214, 224) solid;
+    box-shadow: inset 0px 0px 2px rgba(200,200,200,1);
+}
+.Comment_textarea:focus{
+    border:1px rgb(200,200,200) solid;
+    box-shadow: inset 0px 0px 2px rgba(200,200,200,1);
+}
+
+.Comment_textareaRemoveHover:hover{
+    border:1px white solid;
+    box-shadow: none;
+}
+
+.comment_export{
+    border-radius: 4px;
+    padding:6px 16px;
+    font-family: $font;
+    color:white;
+    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+    background:$main;
+    cursor: pointer;
+    transition:0.2s all;
+    margin-top:10px 0px;
+    float:right;
+}
+.comment_export:hover{
+    background: #303f9f;
+}
+.comment_exportWrapper{
+    height:30px;
+    width:100%;
+}
+.comment_exportWrapper span{
+    position: relative;
+    top:-2px;
+}
+.comment_exportDisable{
+    background:rgb(200,200,200);
+}
+.comment_exportWrapper_icon{
+    width: 8px;
+    margin-left:4px;
+}

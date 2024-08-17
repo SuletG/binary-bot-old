@@ -1,0 +1,113 @@
+@import "../colors.scss";
+.SliderBox {
+  width: 230px;
+  background: $bg-hard;
+  z-index: 2;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: $font;
+  box-sizing: border-box;
+  justify-content: space-between;
+  box-shadow: $modal-shadow;
+  color: $color;
+  position: absolute;
+  top: 40px;
+  left: 0px;
+  z-index: 3;
+}
+.SliderBox:after {
+  content: " ";
+  position: absolute;
+  bottom: 100%; /* At the top of the tooltip */
+  left: 10px;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent $bg-hard transparent;
+}
+
+.SliderBox .MuiSlider-root {
+  color: $main;
+}
+.SliderBox_sliderWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.SliderBox_slider {
+  width: calc(100% - 70px);
+  position: relative;
+}
+.SliderBox_input {
+  height: 25px;
+  width: 50px;
+  border-radius: 4px;
+  border: none;
+  background: $input-bg;
+  outline: none;
+  transition: 0.2s all;
+  padding-left: 8px;
+  color: $input-color;
+  font-family: $font;
+  font-size: 12px;
+
+  &:hover {
+    color: white;
+    background: $input-bg-hover;
+  }
+}
+.SliderBox_input:focus {
+  color: white;
+  background: $input-bg-hover;
+}
+.SliderBox_smallButtons {
+  border-radius: 4px;
+  border: 1px $input-bg solid;
+}
+.SliderBox_bigButton {
+  height: 100%;
+}
+.SliderBox_buttons {
+  width: 100%;
+  display: flex;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.87);
+}
+.SliderBox_borderBottom {
+  border-bottom: 1px $input-bg solid;
+}
+.SliderBox_borderRight {
+  border-right: 1px $input-bg solid;
+}
+.SliderBox_button {
+  width: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: center;
+  padding: 8px;
+  transition: 0.2s all;
+  color: $input-color;
+}
+.SliderBox_button:hover {
+  background: $input-bg-hover;
+  color: white;
+}
+.SliderBox_bigButton {
+  border-radius: 4px;
+  width: auto;
+  padding: 21px 10px;
+  border: 1px rgb(208, 214, 224) solid;
+  box-sizing: border-box;
+}
+.SliderBox_buttonsHolder {
+  display: flex;
+  margin-top: 10px;
+  justify-content: space-between;
+}
+.SliderBox_Right {
+  left: initial;
+  right: 0px;
+}
+.SliderBox_Right:after {
+  left: initial;
+  right: 42px;
+}

@@ -1,0 +1,43 @@
+@import "../../colors.scss";
+
+.CanvasProperties {
+  height: calc(100vh - 164px);
+  background: $bg-hard;
+  z-index: 10000;
+  transition:0.2s all;
+}
+.CanvasProperties :global {
+  .Tree_child:last-child {
+    border-bottom: 1px $input-bg solid;
+  }
+}
+.CanvasProperties_lastChild,
+.CanvasProperties_lastChild:last-child {
+  border-bottom: 1px $input-bg solid;
+}
+.addField {
+  width: 100%;
+  cursor: pointer;
+  text-align: right !important;
+  font-size:12px;
+  padding-right:$padding;
+  box-sizing: border-box !important;
+  cursor: pointer;
+  transition:0.2s all;
+  position: relative;
+  top:-8px;
+
+  &:hover{
+    color:$main;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .CanvasProperties {
+    background: $bg-soft;
+    padding-bottom:30vh;
+  }
+  .addField{
+    display: none;
+  }
+}

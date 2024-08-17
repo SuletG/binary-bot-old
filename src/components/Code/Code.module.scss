@@ -1,0 +1,25 @@
+.codeArea{
+    /* max-height: 130px; */
+    width:100%;
+    overflow: auto;
+    border-radius: 4px;;
+    position: relative;
+    font-family: monaco,Consolas,Lucida Console,monospace; 
+    font-size:12px;
+    margin-top:15px;
+}
+.codeClassName{
+    font-family: monaco,Consolas,Lucida Console,monospace; 
+    color:#828B9B;
+    font-size:12px;
+}
+
+.codeRules{
+    margin-left:20px;
+}
+.value{
+    color:rgb(140,140,140);
+}
+.key{
+    color:#C60813
+}

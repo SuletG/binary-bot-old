@@ -1,4 +1,5 @@
 import { translate } from '../../../../../common/i18n';
+import theme from '../../theme';
 
 Blockly.Blocks.key_value_pair = {
     init() {
@@ -15,7 +16,7 @@ Blockly.Blocks.key_value_pair = {
                     name: 'VALUE',
                 },
             ],
-            colour : '#dedede',
+            colour : theme.subBlockColor,
             output : null,
             tooltip: translate('Returns a string representation of a key value pair'),
         });
@@ -32,3 +33,6 @@ Blockly.JavaScript.key_value_pair = block => {
 
     return [`{"${key}":${value}}`, Blockly.JavaScript.ORDER_ATOMIC];
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/tools/key_value_pair.js

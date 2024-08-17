@@ -12,7 +12,7 @@ class ColorFormatter extends Component {
     render() {
         return (
             <div className={this.props.row.type}>
-                <ReactDataGrid.Row ref="row" {...this.props} />
+                <ReactDataGrid.Row ref="row" {...this.props} />{' '}
             </div>
         );
     }
@@ -33,8 +33,18 @@ export default class LogTable extends Component {
             rows: [],
         };
         this.columns = [
-            { key: 'timestamp', width: 150, resizable: true, name: translate('Timestamp') },
-            { key: 'message', resizable: true, width: 1000, name: translate('Message') },
+            {
+                key      : 'timestamp',
+                width    : 150,
+                resizable: true,
+                name     : translate('Timestamp'),
+            },
+            {
+                key      : 'message',
+                resizable: true,
+                width    : 1000,
+                name     : translate('Message'),
+            },
         ];
     }
     componentDidUpdate(prevProps, prevState) {
@@ -43,7 +53,7 @@ export default class LogTable extends Component {
             $tableScroll.scrollTop($tableScroll.scrollHeight);
         }
     }
-    componentWillMount() {
+    componentDidMount() {
         globalObserver.register('log.export', () => {
             this.export();
         });
@@ -61,20 +71,34 @@ export default class LogTable extends Component {
         return this.state.rows[i];
     }
     export() {
-        const data = json2csv({ data: this.state.rows, fields: ['timestamp', 'message'] });
-        saveAs({ data, filename: 'logs.csv', type: 'text/csv;charset=utf-8' });
+        const data = json2csv({
+            data  : this.state.rows,
+            fields: ['timestamp', 'message'],
+        });
+        saveAs({
+            data,
+            filename: 'logs.csv',
+            type    : 'text/csv;charset=utf-8',
+        });
     }
     render() {
         return (
-            <div style={{ height: minHeight }}>
+            <div
+                style={{
+                    height: minHeight,
+                }}
+            >
                 <ReactDataGrid
                     columns={this.columns}
                     rowGetter={this.rowGetter.bind(this)}
                     rowsCount={this.state.rows.length}
                     minHeight={minHeight}
                     rowRenderer={ColorFormatter}
-                />
+                />{' '}
             </div>
         );
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/LogTable.js

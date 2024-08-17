@@ -7,6 +7,7 @@ import { appendRow, updateRow, saveAs } from '../shared';
 import { translate } from '../../../common/i18n';
 import { roundBalance } from '../../common/tools';
 import * as style from '../style';
+// import api from 'sha1';
 
 const isNumber = num => num !== '' && Number.isFinite(Number(num));
 
@@ -30,8 +31,11 @@ const getTimestamp = date => {
 const minHeight = 290;
 const rowHeight = 25;
 
-const ProfitColor = ({ value }) => <div style={value > 0 ? style.greenLeft : style.redLeft}>{value}</div>;
-const StatusFormat = ({ value }) => <div style={style.left}>{value}</div>;
+const ProfitColor = ({ value }) => <div style={value > 0 ? style.greenLeft : style.redLeft}> {value} </div>;
+const StatusFormat = ({ value }) => <div style={style.left}> {value} </div>;
+const VirtualFormat = ({ value }) => (
+    <div style={value === 'Virtual' ? style.blueLeft : style.whiteLeft}> {value} </div>
+);
 
 export default class TradeTable extends Component {
     constructor({ accountID }) {
@@ -47,21 +51,73 @@ export default class TradeTable extends Component {
             },
         };
         this.columns = [
-            { key: 'timestamp', width: 182, resizable: true, name: translate('Timestamp') },
-            { key: 'reference', width: 100, resizable: true, name: translate('Reference') },
-            { key: 'contract_type', width: 70, resizable: true, name: translate('Trade type') },
-            { key: 'entry_tick', width: 82, resizable: true, name: translate('Entry spot') },
-            { key: 'exit_tick', width: 82, resizable: true, name: translate('Exit spot') },
-            { key: 'buy_price', width: 80, resizable: true, name: translate('Buy price') },
-            { key: 'profit', width: 80, resizable: true, name: translate('Profit/Loss'), formatter: ProfitColor },
-            { key: 'contract_status', width: 90, resizable: true, name: translate('Status'), formatter: StatusFormat },
+            {
+                key      : 'timestamp',
+                width    : 162,
+                resizable: true,
+                name     : translate('Timestamp'),
+            },
+            {
+                key      : 'reference',
+                width    : 100,
+                resizable: true,
+                name     : translate('Reference'),
+            },
+            {
+                key      : 'contract_type',
+                width    : 118,
+                resizable: true,
+                name     : translate('Trade type'),
+            },
+            {
+                key      : 'entry_tick',
+                width    : 104,
+                resizable: true,
+                name     : translate('Entry spot'),
+            },
+            {
+                key      : 'exit_tick',
+                width    : 100,
+                resizable: true,
+                name     : translate('Exit spot'),
+            },
+            {
+                key      : 'buy_price',
+                width    : 105,
+                resizable: true,
+                name     : translate('Buy price'),
+            },
+            {
+                key      : 'profit',
+                width    : 80,
+                resizable: true,
+                name     : translate('Profit/Loss'),
+                formatter: ProfitColor,
+            },
+            {
+                key      : 'contract_status',
+                width    : 90,
+                resizable: true,
+                name     : translate('Status'),
+                formatter: StatusFormat,
+            },
+            {
+                key      : 'type',
+                width    : 90,
+                resizable: true,
+                name     : translate('Contract Type'),
+                formatter: VirtualFormat,
+            },
         ];
     }
     static getTradeObject(contract) {
         const tradeObj = {
             ...contract,
             reference: `${contract.transaction_ids.buy}`,
-            buy_price: roundBalance({ balance: contract.buy_price, currency: contract.currency }),
+            buy_price: roundBalance({
+                balance : contract.buy_price,
+                currency: contract.currency,
+            }),
             timestamp: getTimestamp(contract.date_start),
         };
 
@@ -76,8 +132,18 @@ export default class TradeTable extends Component {
         return tradeObj;
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const { api } = this.props;
+
+        globalObserver.register('bot.virtualApi', vapi => {
+            if (!this.virtualApi) {
+                this.virtualApi = vapi;
+            }
+        });
+
+        globalObserver.register('bot.isVirtual', isVirtual => {
+            this.isVirtual = isVirtual;
+        });
 
         globalObserver.register('summary.export', () => {
             const accountData = this.state[this.props.accountID];
@@ -87,7 +153,9 @@ export default class TradeTable extends Component {
         });
 
         globalObserver.register('summary.clear', () => {
-            this.setState({ [this.props.accountID]: { ...this.state.initial } });
+            this.setState({
+                [this.props.accountID]: { ...this.state.initial },
+            });
             globalObserver.emit('summary.disable_clear');
         });
 
@@ -108,6 +176,7 @@ export default class TradeTable extends Component {
                 ...tradeObj,
                 profit          : getProfit(tradeObj),
                 contract_status : translate('Pending'),
+                type            : this.isVirtual ? translate('Virtual') : translate('Normal'),
                 contract_settled: false,
             };
 
@@ -121,19 +190,23 @@ export default class TradeTable extends Component {
             }
 
             if (prevRowIndex >= 0) {
-                this.setState({ [accountID]: updateRow(prevRowIndex, trade, accountStat) });
+                this.setState({
+                    [accountID]: updateRow(prevRowIndex, trade, accountStat),
+                });
             } else {
-                this.setState({ [accountID]: appendRow(trade, accountStat) });
+                this.setState({
+                    [accountID]: appendRow(trade, accountStat),
+                });
             }
         });
 
         globalObserver.register('contract.settled', contract => {
             const contractID = contract.contract_id;
-            this.settleContract(api, contractID);
+            this.settleContract(this.isVirtual, this.isVirtual ? this.virtualApi : api, contractID);
         });
     }
 
-    async settleContract(api, contractID) {
+    async settleContract(isVirtual, api, contractID) {
         let settled = false;
         let delay = 3000;
 
@@ -143,7 +216,7 @@ export default class TradeTable extends Component {
             await sleep();
 
             try {
-                await this.refreshContract(api, contractID);
+                await this.refreshContract(isVirtual, api, contractID);
 
                 const { accountID } = this.props;
                 const rows = this.state[accountID].rows.slice();
@@ -160,7 +233,8 @@ export default class TradeTable extends Component {
         }
     }
 
-    refreshContract(api, contractID) {
+    refreshContract(isVirtual, a, contractID) {
+        const api = isVirtual ? this.virtualApi : a;
         return api.getContractInfo(contractID).then(r => {
             const contract = r.proposal_open_contract;
             const tradeObj = TradeTable.getTradeObject(contract);
@@ -182,6 +256,7 @@ export default class TradeTable extends Component {
                 if (reference === trade.reference) {
                     return {
                         contract_status : translate('Settled'),
+                        type            : isVirtual ? translate('Virtual') : translate('Normal'),
                         contract_settled: true,
                         reference,
                         ...trade,
@@ -190,7 +265,11 @@ export default class TradeTable extends Component {
                 return row;
             });
 
-            this.setState({ [accountID]: { rows: updatedRows } });
+            this.setState({
+                [accountID]: {
+                    rows: updatedRows,
+                },
+            });
         });
     }
 
@@ -220,14 +299,21 @@ export default class TradeTable extends Component {
                 'buy_price',
                 'sell_price',
                 'profit',
+                'contract_type',
             ],
         });
-        saveAs({ data, filename: 'logs.csv', type: 'text/csv;charset=utf-8' });
+        saveAs({
+            data,
+            filename: 'logs.csv',
+            type    : 'text/csv;charset=utf-8',
+        });
     }
     getAccountStat(accountID) {
         if (!(accountID in this.state)) {
             const initialInfo = this.state.initial;
-            this.setState({ [accountID]: { ...initialInfo } });
+            this.setState({
+                [accountID]: { ...initialInfo },
+            });
             return initialInfo;
         }
         return this.state[accountID];
@@ -236,15 +322,18 @@ export default class TradeTable extends Component {
         const { accountID } = this.props;
         const rows = accountID in this.state ? this.state[accountID].rows : [];
         return (
-            <div>
+            <div className="content-row-table">
                 <ReactDataGrid
                     columns={this.columns}
                     rowGetter={this.rowGetter.bind(this)}
                     rowsCount={rows.length}
                     minHeight={minHeight}
                     rowHeight={rowHeight}
-                />
+                />{' '}
             </div>
         );
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/TradeInfoPanel/TradeTable.js

@@ -1,0 +1,46 @@
+@import '../colors.scss';
+.checkbox {
+    height:28px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    color:$color;
+    font-size:12px;
+
+    &:hover {
+        .checkboxDesign{
+            color:$input-bg-hover!important;
+        }
+
+        .label {
+            color:white;
+        }
+    }
+}
+.inputDisable{
+    opacity:0.5;
+}
+.label{
+    max-height: 28px;
+    text-transform: capitalize;
+    width: $label-width;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden; 
+    transition:0.2s all;
+}
+.removeCapitalize{
+    text-transform: initial;
+}
+.checkboxHolder{
+    width:28px;
+    height:28px;
+    // min-width: 64px;
+    position: relative;
+    left:-12px;
+    top:-6px;
+}
+.checkboxDesign{
+    color:$input-bg !important;
+    transition:0.2s all !important;
+}

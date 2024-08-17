@@ -1,0 +1,89 @@
+@import "../../colors.scss";
+$footerHeight: 50px;
+.CanvasComp {
+  height: 200px;
+  // width:calc(50% - 20px);
+  flex: 0 0 31%;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  background: rgb(45, 46, 65);
+  position: relative;
+}
+.CanvasComp_button {
+  width: 90px;
+  height: 34px;
+  line-height: 34px;
+  border-radius: 8px;
+  background: $bg-hard;
+  border: 1px $bg-hard solid;
+  font-size: 12px;
+  color: white;
+  text-align: center !important;
+  cursor: pointer;
+  // opacity: 0;
+  box-shadow: 0px 2px 4px rgb(35, 35, 35);
+  transition: 0.2s all;
+  position: relative;
+
+  &:hover {
+    background: $main;
+    box-shadow: 0px 2px 6px rgb(15, 15, 15);
+  }
+}
+.CanvasComp:hover {
+  .CanvasComp_button {
+    border: 1px $main solid;
+  }
+}
+.CanvasComp:hover .CanvasComp_button {
+  opacity: 1;
+}
+.wrapper {
+  width: calc(100% - 12px);
+  height: calc(100% - #{$footerHeight});
+  padding: 8px;
+  box-sizing: border-box !important;
+  background: white;
+  align-items: center;
+  border-radius: 6px;
+  overflow: auto;
+  justify-content: center;
+  display: flex;
+  margin-left: 6px;
+  margin-top: 6px;
+}
+.footer {
+  height: $footerHeight;
+  display: flex;
+  align-items: center;
+  padding: 0px 6px;
+  justify-content: space-between;
+}
+.title {
+  font-size: 12px;
+  color: $color;
+  padding: 4px 8px;
+  border: 1px rgba(0, 0, 0, 0) solid;
+  border-radius: 4px;
+  transition: 0.2s all;
+}
+
+.titleEditable {
+  &:hover {
+    border: 1px $main solid;
+  }
+
+  &:focus {
+    color: white;
+    border: 1px $main solid;
+    outline: none;
+  }
+}
+@media only screen and (max-width: 900px) {
+  .CanvasComp {
+    flex: 0 0 100%;
+  }
+}

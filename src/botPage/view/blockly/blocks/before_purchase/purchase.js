@@ -2,6 +2,7 @@
 import { insideBeforePurchase } from '../../relationChecker';
 import { translate } from '../../../../../common/i18n';
 import { getPurchaseChoices } from '../shared';
+import theme from '../../theme';
 
 Blockly.Blocks.purchase = {
     init: function init() {
@@ -9,9 +10,8 @@ Blockly.Blocks.purchase = {
             .appendField(translate('Purchase'))
             .appendField(new Blockly.FieldDropdown(getPurchaseChoices), 'PURCHASE_LIST');
         this.setPreviousStatement(true, 'Purchase');
-        this.setColour('#f2f2f2');
+        this.setColour(theme.subBlockColor);
         this.setTooltip(translate('Purchases a chosen contract.'));
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
     },
     onchange: function onchange(ev) {
         insideBeforePurchase(this, ev, 'Purchase');
@@ -19,7 +19,9 @@ Blockly.Blocks.purchase = {
 };
 Blockly.JavaScript.purchase = block => {
     const purchaseList = block.getFieldValue('PURCHASE_LIST');
-    const code = `Bot.purchase('${purchaseList}');
-`;
+    const code = `Bot.purchase('${purchaseList}');`;
     return code;
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/before_purchase/purchase.js

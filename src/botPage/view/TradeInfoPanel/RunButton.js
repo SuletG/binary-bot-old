@@ -8,9 +8,14 @@ const RunButton = () => (
             title={translate('Stop the bot')}
             id="summaryStopButton"
             className="toolbox-button icon-stop"
-            style={{ display: 'none' }}
-        />
+            style={{
+                display: 'none',
+            }}
+        />{' '}
     </React.Fragment>
 );
 
 export default RunButton;
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/TradeInfoPanel/RunButton.js

@@ -1,13 +1,9 @@
-import React from 'react';
-import { render } from 'react-dom';
 import { parseQueryString } from '../common/utils/tools';
-import { set as setStorage, get as getStorage, remove } from '../common/utils/storageManager';
+import { set as setStorage, get as getStorage } from '../common/utils/storageManager';
 import { setCookieLanguage } from '../common/utils/cookieManager';
 import { supportedLanguages, translate, init } from './i18n';
 import { getClientsCountryByIP } from './utils/utility';
-import BotLanding from '../indexPage/react-components/bot-landing';
 
-const elements = ['#notification-banner', '#main', '#footer', '#header'];
 export const getLanguage = () => {
     const queryLang = parseQueryString().l;
     const lang = queryLang in supportedLanguages ? queryLang : getStorage('lang') || 'en';
@@ -20,6 +16,7 @@ const addUiLang = () => {
     $('[data-i18n-text]').each(function each() {
         const el = $(this);
         const contents = el.contents();
+
         el.text(translate($(this).attr('data-i18n-text'))).append(contents);
     });
 
@@ -34,21 +31,7 @@ export const load = () => {
 
     $('#select_language li:not(:first)').click(function click() {
         const newLang = $(this).attr('class');
-        if (
-            document.getElementById('bot-landing') !== null &&
-            document.getElementById('bot-landing') !== undefined &&
-            document.getElementById('bot-landing').classList.contains('hidden') === false
-        ) {
-            remove('setDueDateForBanner');
-            render(<BotLanding />, document.getElementById('bot-landing'));
-            elements.map(elem => document.querySelector(elem).classList.add('hidden'));
-            document.getElementById('bot-landing').classList.remove('hidden');
-            document.getElementById('bot-main').classList.remove('hidden');
-            document.location.search = `l=${newLang}`;
-            $('.barspinner').hide();
-        } else {
-            document.location.search = `l=${newLang}`;
-        }
+        document.location.search = `l=${newLang}`;
     });
 
     $('.language').text(
@@ -56,9 +39,6 @@ export const load = () => {
             .hide()
             .text()
     );
-
-    $('.actual_flag').text(`${lang}`);
-    $('.language_background_flag').addClass(`${lang}_flag_mtd`);
 
     if (lang === 'ach') {
         // eslint-disable-next-line no-underscore-dangle
@@ -88,3 +68,6 @@ export const showBanner = async () => {
         });
     }
 };
+
+// WEBPACK FOOTER //
+// ./src/common/lang.js

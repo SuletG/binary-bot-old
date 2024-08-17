@@ -9,19 +9,28 @@ export const marketDropdown = block => {
         .appendDummyInput('MARKETDEFINITION')
         .appendField(`${translate('Market')}:`)
         .appendField(new Blockly.FieldDropdown(fieldGeneratorMapping.MARKET_LIST()), 'MARKET_LIST')
-        .appendField('>')
+        .appendField('❯')
         .appendField(new Blockly.FieldDropdown(fieldGeneratorMapping.SUBMARKET_LIST(block)), 'SUBMARKET_LIST')
-        .appendField('>')
+        .appendField('❯')
         .appendField(new Blockly.FieldDropdown(fieldGeneratorMapping.SYMBOL_LIST(block)), 'SYMBOL_LIST');
 };
 
 export const tradeTypeDropdown = block => {
+    const getContractTypes = () => {
+        const tradeType = block.getFieldValue('TRADETYPE_LIST');
+        if (tradeType && tradeType !== 'na') {
+            return [[translate('Both'), 'both'], ...oppositesToDropdown(config.opposites[tradeType.toUpperCase()])];
+        }
+        return [[translate('Not available'), 'na']];
+    };
     block
         .appendDummyInput('TRADETYPEDEFINITION')
         .appendField(`${translate('Trade Type')}:`)
         .appendField(new Blockly.FieldDropdown(fieldGeneratorMapping.TRADETYPECAT_LIST(block)), 'TRADETYPECAT_LIST')
-        .appendField('>')
-        .appendField(new Blockly.FieldDropdown(fieldGeneratorMapping.TRADETYPE_LIST(block)), 'TRADETYPE_LIST');
+        .appendField('❯')
+        .appendField(new Blockly.FieldDropdown(fieldGeneratorMapping.TRADETYPE_LIST(block)), 'TRADETYPE_LIST')
+        .appendField(translate('Contract Type:'))
+        .appendField(new Blockly.FieldDropdown(getContractTypes), 'TYPE_LIST');
 };
 
 export const contractTypes = block => {
@@ -115,12 +124,58 @@ export const restart = block => {
     block
         .appendDummyInput()
         .appendField(`${translate('Restart buy/sell on error')}`)
-        .appendField(`(${translate('disable for better performance')}):`)
-        .appendField(new Blockly.FieldCheckbox('FALSE'), 'TIME_MACHINE_ENABLED');
+        // .appendField(`(${translate('disable for better performance')}):`)
+        .appendField(new Blockly.FieldCheckbox('true'), 'TIME_MACHINE_ENABLED')
+        .appendField(`${translate('Restart last trade on error')}`)
+        // .appendField(`(${translate('bot ignores the unsuccessful trade')}):`)
+        .appendField(new Blockly.FieldCheckbox('TRUE'), 'RESTARTONERROR');
     block
         .appendDummyInput()
-        .appendField(`${translate('Restart last trade on error')}`)
-        .appendField(`(${translate('bot ignores the unsuccessful trade')}):`)
-        .appendField(new Blockly.FieldCheckbox('TRUE'), 'RESTARTONERROR')
-        .appendField(new Blockly.FieldImage(caution, 15, 15, '!'));
+        .appendField(`${translate('Use 5000 candles/ticks (heavy processing)')}`)
+        // .appendField(`(${translate('bot ignores the unsuccessful trade')}):`)
+        .appendField(new Blockly.FieldCheckbox('FALSE'), 'USE5000');
+    // .appendField(new Blockly.FieldImage(caution, 15, 15, '!'));
 };
+
+export const virtualTrades = block => {
+    block
+        .appendDummyInput()
+        .appendField(`${translate('Virtual Trades Settings')}:`)
+        .appendField(
+            new Blockly.FieldDropdown([
+                [translate('Disabled'), 'disabled'],
+                [translate('Enabled'), 'enabled'],
+            ]),
+            'VIRTUAL_ACTIVE'
+        )
+        .appendField(`${translate('Max Steps')}:`)
+        .appendField(new Blockly.FieldNumber(1, 1, 50), 'VIRTUAL_STEPS')
+        .appendField(`${translate('Reset on win')}:`)
+        .appendField(
+            new Blockly.FieldDropdown([
+                [translate('Disabled'), 'disabled'],
+                [translate('Enabled'), 'enabled'],
+            ]),
+            'VIRTUAL_RESET'
+        )
+        .appendField(`${translate('Token')}:`)
+        .appendField(new Blockly.FieldTextInput(translate('demo account token here')), 'VIRTUAL_TOKEN');
+    block
+        .appendDummyInput()
+        .appendField(`                   ${translate('Min. Trades on Real')}:`)
+        .appendField(new Blockly.FieldNumber(1, 1, 50), 'VIRTUAL_MINSTEPS')
+        .appendField(`${translate('Max. Trades on Real')}:`)
+        .appendField(new Blockly.FieldNumber(1, 1, 50), 'VIRTUAL_MAXSTEPS')
+        .appendField(`${translate('Go Back to Virtual')}:`)
+        .appendField(
+            new Blockly.FieldDropdown([
+                [translate('Win'), 'win'],
+                [translate('Loss'), 'loss'],
+                [translate('Any'), 'any'],
+            ]),
+            'VIRTUAL_GOBACK'
+        );
+};
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/trade/components.js

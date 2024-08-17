@@ -92,7 +92,7 @@ const insideMain = (blockObj, ev, name, topName, topDesc) =>
         `${name} ${translate('must be added inside:')} ${topDesc}`
     );
 
-export const insideTrade = (...args) => insideMain(...args, 'trade', 'trade') && conditionFields(...args);
+export const insideTrade = (...args) => insideMain(...args, 'trade', 'Trade Definitions') && conditionFields(...args);
 
 export const insideBeforePurchase = (...args) => insideMain(...args, 'before_purchase', 'Before Purchase');
 
@@ -112,3 +112,6 @@ export const insideScope = (blockObj, ev, name, scopes) =>
 export const mainScope = (blockObj, ev, name) => {
     insideScope(blockObj, ev, name, ['trade', 'during_purchase', 'before_purchase', 'after_purchase', 'tick_analysis']);
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/relationChecker.js

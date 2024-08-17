@@ -10,12 +10,21 @@ export default Engine =>
                     balance: { balance: b, currency },
                 } = r;
 
-                const balance = roundBalance({ currency, balance: b });
+                const balance = roundBalance({
+                    currency,
+                    balance: b,
+                });
                 const balanceStr = `${balance} ${currency}`;
 
-                globalObserver.setState({ balance, currency });
+                globalObserver.setState({
+                    balance,
+                    currency,
+                });
 
-                info({ accountID: this.accountInfo.loginid, balance: balanceStr });
+                info({
+                    accountID: this.accountInfo.loginid,
+                    balance  : balanceStr,
+                });
             });
         }
         // eslint-disable-next-line class-methods-use-this
@@ -25,3 +34,6 @@ export default Engine =>
             return type === 'STR' ? balanceStr : Number(balance);
         }
     };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/Balance.js

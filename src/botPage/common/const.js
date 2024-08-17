@@ -17,12 +17,23 @@ const config = {
             [translate('contract type'), '5'],
             [translate('entry spot'), '6'],
             [translate('entry value'), '7'],
-            [translate('entry value string'), '12'],
             [translate('exit spot'), '8'],
             [translate('exit value'), '9'],
-            [translate('exit value string'), '13'],
             [translate('barrier'), '10'],
             [translate('result'), '11'],
+            [translate('entry value string'), '12'],
+            [translate('exit value string'), '13'],
+        ],
+        ACTUAL_DETAILS: [
+            [translate('statement'), '1'],
+            [translate('ask price'), '2'],
+            [translate('payout'), '3'],
+            [translate('profit'), '4'],
+            [translate('contract type'), '5'],
+            [translate('entry spot'), '6'],
+            [translate('entry value'), '7'],
+            [translate('entry value string'), '8'],
+            [translate('barrier'), '9'],
         ],
         CHECK_RESULT: [
             [translate('Win'), 'win'],
@@ -38,18 +49,20 @@ const config = {
             [translate('number'), 'NUM'],
         ],
         NOTIFICATION_TYPE: [
-            [translate('green'), 'success'],
-            [translate('blue'), 'info'],
-            [translate('yellow'), 'warn'],
-            [translate('red'), 'error'],
+            [translate('success'), 'success'],
+            [translate('info'), 'info'],
+            [translate('warn'), 'warn'],
+            [translate('error'), 'error'],
+            [translate('trace'), 'trace'],
+            [translate('debug'), 'debug'],
         ],
         NOTIFICATION_SOUND: [
-            [translate('Silent'), 'silent'],
-            [translate('Announcement'), 'announcement'],
-            [translate('Earned money'), 'earned-money'],
-            [translate('Job done'), 'job-done'],
-            [translate('Error'), 'error'],
-            [translate('Severe error'), 'severe-error'],
+            [translate('silent'), 'silent'],
+            [translate('announcement'), 'announcement'],
+            [translate('earned money'), 'earned-money'],
+            [translate('job done'), 'job-done'],
+            [translate('error'), 'error'],
+            [translate('severe error'), 'severe-error'],
         ],
     },
     opposites: {
@@ -185,13 +198,10 @@ const config = {
         [translate('1 day'), '86400'],
     ],
     mainBlocks         : ['trade', 'before_purchase', 'after_purchase', 'during_purchase'],
-    mandatoryBlocks    : ['trade', 'before_purchase', 'tradeOptions', 'purchase'],
+    // mandatoryBlocks    : ['trade', 'before_purchase', 'tradeOptions', 'purchase'],
+    mandatoryBlocks    : ['trade', 'before_purchase', 'purchase'],
     mandatoryMainBlocks: ['trade', 'before_purchase'],
     mandatoryBlockPairs: [
-        {
-            parentBlock: 'trade',
-            childBlock : 'tradeOptions',
-        },
         {
             parentBlock: 'before_purchase',
             childBlock : 'purchase',
@@ -256,15 +266,48 @@ const config = {
         timeout        : translate('Run After n Seconds'),
         interval       : translate('Run Every n Seconds'),
     },
+    tickDirection: [
+        [translate('Up'), 'up'],
+        [translate('Down'), 'down'],
+    ],
+    aroonFields: [
+        [translate('Upper'), 'upper'],
+        [translate('Lower'), 'lower'],
+    ],
     bbResult: [
-        [translate('upper'), '1'],
-        [translate('middle'), '0'],
-        [translate('lower'), '2'],
+        [translate('Upper'), 'upper'],
+        [translate('Middle'), 'middle'],
+        [translate('Lower'), 'lower'],
     ],
     macdFields: [
-        [translate('Histogram'), '0'],
-        [translate('MACD'), '1'],
-        [translate('Signal'), '2'],
+        [translate('Histogram'), 'histogram'],
+        [translate('MACD'), 'MACD'],
+        [translate('Signal'), 'signal'],
+    ],
+    supertrendFields: [
+        [translate('Direction'), 'direction'],
+        [translate('Supertrend'), 'supertrend'],
+    ],
+    adxFields: [
+        [translate('ADX'), 'adx'],
+        [translate('MDI'), 'mdi'],
+        [translate('PDI'), 'pdi'],
+    ],
+    kstFields: [
+        [translate('KST'), 'kst'],
+        [translate('Signal'), 'signal'],
+    ],
+    stochFields: [
+        [translate('K'), 'k'],
+        [translate('D'), 'd'],
+    ],
+    srFields: [
+        [translate('Support'), 'support'],
+        [translate('Resistance'), 'resistance'],
+    ],
+    sourceFields: [
+        [translate('Ticks'), 'ticks'],
+        [translate('Candles'), 'candles'],
     ],
     gd: {
         cid: '828416594271-qj2dnf4u2omg1iugangbtsrq6p0a55oc.apps.googleusercontent.com',
@@ -273,9 +316,13 @@ const config = {
     },
     quick_strategies : ['martingale', 'dalembert'],
     blocked_countries: ['au'],
+    returnList       : [
+        [translate('Latest'), 'latest'],
+        [translate('List'), 'list'],
+    ],
 };
 
-export async function updateConfigCurrencies(api = generateLiveApiInstance()) {
+export async function updateConfigCurrencies(api) {
     try {
         const response = await api.getPayoutCurrencies();
         config.lists.CURRENCY = response.payout_currencies.map(c => {
@@ -288,3 +335,6 @@ export async function updateConfigCurrencies(api = generateLiveApiInstance()) {
 }
 
 export default config;
+
+// WEBPACK FOOTER //
+// ./src/botPage/common/const.js

@@ -32,7 +32,10 @@ const getAllowedConditionsOrCategoriesForSymbol = symbol => {
             }
         });
     }
-    return { conditions, categories };
+    return {
+        conditions,
+        categories,
+    };
 };
 
 const getCategoryForCondition = condition =>
@@ -43,30 +46,31 @@ const getCategoryForCondition = condition =>
 export default class _Symbol {
     constructor(api) {
         this.api = api;
-        this.initPromise = new Promise(resolve => {
-            const getActiveSymbolsLogic = () => {
-                this.api.getActiveSymbolsBrief().then(r => {
-                    this.activeSymbols = new ActiveSymbols(r.active_symbols);
-                    this.api.getAssetIndex().then(r2 => {
-                        parsedAssetIndex = parseAssetIndex(r2.asset_index);
-                        resolve();
+        this.initPromise = api2 =>
+            new Promise(resolve => {
+                const getActiveSymbolsLogic = () =>
+                    api2.getActiveSymbolsBrief().then(r => {
+                        this.activeSymbols = new ActiveSymbols(r.active_symbols);
+                        return api2.getAssetIndex().then(r2 => {
+                            parsedAssetIndex = parseAssetIndex(r2.asset_index);
+                            resolve();
+                        }, noop);
                     }, noop);
-                }, noop);
-            };
-            // Authorize the WS connection when possible for accurate offered Symbols & AssetIndex
-            const tokenList = getTokenList();
-            if (tokenList.length) {
-                this.api
-                    .authorize(tokenList[0].token)
-                    .then(() => getActiveSymbolsLogic())
-                    .catch(() => {
-                        removeAllTokens();
-                        getActiveSymbolsLogic();
-                    });
-            } else {
+                // Authorize the WS connection when possible for accurate offered Symbols & AssetIndex
+                // const tokenList = getTokenList();
                 getActiveSymbolsLogic();
-            }
-        });
+                // if (tokenList.length) {
+                //     this.api
+                //         .authorize(tokenList[0].token)
+                //         .then(() => getActiveSymbolsLogic())
+                //         .catch(() => {
+                //             removeAllTokens();
+                //             getActiveSymbolsLogic();
+                //         });
+                // } else {
+                //     getActiveSymbolsLogic();
+                // }
+            });
     }
     /* eslint-disable class-methods-use-this */
     getLimitation(symbol, condition) {
@@ -95,3 +99,6 @@ export default class _Symbol {
     }
     /* eslint-enable */
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/common/symbolApi/index.js

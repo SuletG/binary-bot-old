@@ -45,12 +45,14 @@ const shouldStopOnError = (bot, errorName = '') => {
 const timeMachineEnabled = bot => botInitialized(bot) && bot.tradeEngine.options.timeMachineEnabled;
 
 export default class Interpreter {
-    constructor() {
+    constructor(auth) {
+        this.auth = auth;
         this.init();
     }
     init() {
         this.$scope = createScope();
         this.bot = new Interface(this.$scope);
+        this.bot.auth = this.auth;
         this.stopped = false;
         this.$scope.observer.register('REVERT', watchName =>
             this.revert(watchName === 'before' ? this.beforeState : this.duringState)
@@ -164,6 +166,9 @@ export default class Interpreter {
         if (this.stopped || !this.interpreter.run()) {
             this.onFinish(this.interpreter.pseudoToNative(this.interpreter.value));
         }
+        if (this.bot.tradeEngine.toStop) {
+            this.terminateSession();
+        }
     }
     revert(state) {
         this.interpreter.restoreStateSnapshot(state);
@@ -184,7 +189,9 @@ export default class Interpreter {
         this.isErrorTriggered = false;
 
         globalObserver.emit('bot.stop');
-        globalObserver.setState({ isRunning: false });
+        globalObserver.setState({
+            isRunning: false,
+        });
     }
     stop() {
         if (this.bot.tradeEngine.isSold === false && !this.isErrorTriggered) {
@@ -222,10 +229,15 @@ export default class Interpreter {
         // remove this. We don't know how many args are going to be passed, so we
         // assume a max of 100.
         const MAX_ACCEPTABLE_FUNC_ARGS = 100;
-        Object.defineProperty(asyncFunc, 'length', { value: MAX_ACCEPTABLE_FUNC_ARGS + 1 });
+        Object.defineProperty(asyncFunc, 'length', {
+            value: MAX_ACCEPTABLE_FUNC_ARGS + 1,
+        });
         return interpreter.createAsyncFunction(asyncFunc);
     }
     hasStarted() {
         return !this.stopped;
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/Interpreter.js

@@ -75,3 +75,6 @@ export default class ActiveSymbols {
     }
     /* eslint-enable */
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/common/symbolApi/activeSymbols.js

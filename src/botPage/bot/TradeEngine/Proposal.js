@@ -9,7 +9,6 @@ export default Engine =>
             if (!this.isNewTradeOption(tradeOption)) {
                 return;
             }
-
             // Generate a purchase reference when trade options are different from previous trade options.
             // This will ensure the bot doesn't mistakenly purchase the wrong proposal.
             this.regeneratePurchaseReference();
@@ -17,9 +16,13 @@ export default Engine =>
             this.proposalTemplates = tradeOptionToProposal(tradeOption, this.getPurchaseReference());
             this.renewProposalsOnPurchase();
         }
-        selectProposal(contractType) {
-            const { proposals } = this.data;
 
+        selectProposal(contractType) {
+            // console.log(this.dataVirtual, this.data);
+            const { proposals } =
+                this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                    ? this.dataVirtual
+                    : this.data;
             if (proposals.length === 0) {
                 throw Error(translate('Proposals are not ready'));
             }
@@ -49,10 +52,11 @@ export default Engine =>
                 throw new TrackJSError(
                     'CustomInvalidProposal',
                     translate('Selected proposal does not exist'),
-                    this.data.proposals
+                    this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                        ? this.dataVirtual.proposals
+                        : this.data.proposals
                 );
             }
-
             return {
                 proposal: toBuy,
                 currency: this.tradeOption.currency,
@@ -65,33 +69,43 @@ export default Engine =>
             this.data.proposals = [];
             this.store.dispatch(clearProposals());
         }
+        clearProposalsVirtual() {
+            this.dataVirtual.proposals = [];
+        }
         requestProposals() {
             Promise.all(
-                this.proposalTemplates.map(proposal =>
-                    doUntilDone(() =>
-                        this.api.subscribeToPriceForContractProposal(proposal).catch(error => {
-                            // We intercept ContractBuyValidationError as user may have specified
-                            // e.g. a DIGITUNDER 0 or DIGITOVER 9, while one proposal may be invalid
-                            // the other is valid. We will error on Purchase rather than here.
+                this.proposalTemplates.map(proposal => {
+                    // const api = this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing ? this.virtualApi : this.api;
+                    if (this.virtualSettings.active && this.virtualSettings.valid) {
+                        this.virtualApi.subscribeToPriceForContractProposal(proposal).catch(error => {
                             if (error && error.name === 'ContractBuyValidationError') {
-                                this.data.proposals.push({
+                                this.dataVirtual.proposals.push({
                                     ...error.error.echo_req,
                                     ...error.error.echo_req.passthrough,
                                     error,
                                 });
                                 return null;
                             }
-
                             throw error;
-                        })
-                    )
-                )
+                        });
+                    }
+                    return this.api.subscribeToPriceForContractProposal(proposal).catch(error => {
+                        if (error && error.name === 'ContractBuyValidationError') {
+                            this.data.proposals.push({
+                                ...error.error.echo_req,
+                                ...error.error.echo_req.passthrough,
+                                error,
+                            });
+                            return null;
+                        }
+                        throw error;
+                    });
+                })
             ).catch(e => this.$scope.observer.emit('Error', e));
         }
         observeProposals() {
             this.listen('proposal', response => {
                 const { passthrough, proposal } = response;
-
                 if (
                     this.data.proposals.findIndex(p => p.id === proposal.id) === -1 &&
                     !this.data.forgetProposalIds.includes(proposal.id)
@@ -101,10 +115,46 @@ export default Engine =>
                     this.checkProposalReady();
                 }
             });
+            this.listenVirtual('proposal', response => {
+                const { passthrough, proposal } = response;
+                if (
+                    this.dataVirtual.proposals.findIndex(p => p.id === proposal.id) === -1 &&
+                    !this.dataVirtual.forgetProposalIds.includes(proposal.id)
+                ) {
+                    // Add proposals based on the ID returned by the API.
+                    this.dataVirtual.proposals.push({ ...proposal, ...passthrough });
+                    this.checkProposalReady();
+                }
+            });
         }
         unsubscribeProposals() {
+            const { proposals: prop } = this.dataVirtual;
+            let removeForgetProposalById = forgetProposalId => {
+                this.dataVirtual.forgetProposalIds = this.dataVirtual.forgetProposalIds.filter(
+                    id => id !== forgetProposalId
+                );
+            };
+
+            this.clearProposalsVirtual();
+
+            Promise.all(
+                prop.map(proposal => {
+                    if (!this.dataVirtual.forgetProposalIds.includes(proposal.id)) {
+                        this.dataVirtual.forgetProposalIds.push(proposal.id);
+                    }
+
+                    if (proposal.error) {
+                        removeForgetProposalById(proposal.id);
+                        return Promise.resolve();
+                    }
+                    return doUntilDone(() => this.virtualApi.unsubscribeByID(proposal.id)).then(() =>
+                        removeForgetProposalById(proposal.id)
+                    );
+                })
+            );
+
             const { proposals } = this.data;
-            const removeForgetProposalById = forgetProposalId => {
+            removeForgetProposalById = forgetProposalId => {
                 this.data.forgetProposalIds = this.data.forgetProposalIds.filter(id => id !== forgetProposalId);
             };
 
@@ -120,18 +170,17 @@ export default Engine =>
                         removeForgetProposalById(proposal.id);
                         return Promise.resolve();
                     }
-
                     return doUntilDone(() => this.api.unsubscribeByID(proposal.id)).then(() =>
                         removeForgetProposalById(proposal.id)
                     );
                 })
             );
         }
-        checkProposalReady() {
-            // Proposals are considered ready when the proposals in our memory match the ones
-            // we've requested from the API, we determine this by checking the passthrough of the response.
-            const { proposals } = this.data;
-
+        async checkProposalReady() {
+            const { proposals } =
+                this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                    ? this.dataVirtual
+                    : this.data;
             if (proposals.length > 0) {
                 const hasEqualProposals = this.proposalTemplates.every(
                     template =>
@@ -143,6 +192,12 @@ export default Engine =>
                 );
 
                 if (hasEqualProposals) {
+                    // await Promise.all([
+                    //     () => this.startVirtual,
+                    //     () => this.startPromise,
+                    // ]);
+                    // await this.startPromise;
+                    // this.store.dispatch(proposalsReady());
                     this.startPromise.then(() => this.store.dispatch(proposalsReady()));
                 }
             }
@@ -168,3 +223,6 @@ export default Engine =>
             ].some(value => this.tradeOption[value] !== tradeOption[value]);
         }
     };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/Proposal.js

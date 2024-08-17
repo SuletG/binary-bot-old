@@ -1,0 +1,40 @@
+.app {
+  max-width: 800px;
+  padding-bottom:10px;
+  // overflow: scroll;
+}
+.title{
+    width: 100%;
+    font-size:24px;
+    font-weight: bold;
+}
+.subTitle{
+    font-weight: 600;
+    font-size:22px;
+    margin:20px 0px;
+}
+.section {
+  margin-bottom: 40px;
+}
+
+.config {
+  padding-bottom: 20px;
+}
+
+.label {
+  padding-right: 20px;
+}
+
+.input {
+  margin-right: 10px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.item {
+  margin-right: 10px;
+}
+
+.textarea {
+  width:300px;
+}

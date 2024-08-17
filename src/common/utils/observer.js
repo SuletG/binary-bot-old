@@ -37,11 +37,26 @@ export default class Observer {
         const actionList = this.eam.get(event);
 
         this.eam = actionList
-            ? this.eam.set(event, actionList.push({ action, searchBy: _action }))
-            : this.eam.set(event, new List().push({ action, searchBy: _action }));
+            ? this.eam.set(
+                event,
+                actionList.push({
+                    action,
+                    searchBy: _action,
+                })
+            )
+            : this.eam.set(
+                event,
+                new List().push({
+                    action,
+                    searchBy: _action,
+                })
+            );
     }
     unregister(event, f) {
-        this.eam = this.eam.set(event, this.eam.get(event).filter(r => r.searchBy !== f));
+        this.eam = this.eam.set(
+            event,
+            this.eam.get(event).filter(r => r.searchBy !== f)
+        );
     }
     isRegistered(event) {
         return this.eam.has(event);
@@ -63,3 +78,6 @@ export default class Observer {
 }
 
 export const observer = new Observer();
+
+// WEBPACK FOOTER //
+// ./src/common/utils/observer.js

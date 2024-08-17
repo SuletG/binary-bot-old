@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import {
     ChartMode,
     DrawTools,
@@ -36,7 +35,9 @@ class ChartContent extends PureComponent {
     constructor(props) {
         super(props);
         const { api } = props;
-        this.settings = { language: getLanguage() };
+        this.settings = {
+            language: getLanguage(),
+        };
         this.ticksService = new ChartTicksService(api);
         this.listeners = [];
         this.chartId = 'binary-bot-chart';
@@ -54,7 +55,9 @@ class ChartContent extends PureComponent {
     componentDidMount() {
         globalObserver.register('bot.init', s => {
             if (s && this.state.symbol !== s) {
-                this.setState({ symbol: s });
+                this.setState({
+                    symbol: s,
+                });
             }
         });
 
@@ -62,11 +65,22 @@ class ChartContent extends PureComponent {
             if (c) {
                 if (c.is_sold) {
                     this.shouldBarrierDisplay = false;
-                    this.setState({ barrierType: null });
+                    this.setState({
+                        barrierType: null,
+                    });
                 } else {
-                    this.setState({ barrierType: BarrierTypes[c.contract_type] });
-                    if (c.barrier) this.setState({ high: c.barrier });
-                    if (c.high_barrier) this.setState({ high: c.high_barrier, low: c.low_barrier });
+                    this.setState({
+                        barrierType: BarrierTypes[c.contract_type],
+                    });
+                    if (c.barrier)
+                    {this.setState({
+                        high: c.barrier,
+                    });}
+                    if (c.high_barrier)
+                    {this.setState({
+                        high: c.high_barrier,
+                        low : c.low_barrier,
+                    });}
                     this.shouldBarrierDisplay = true;
                 }
             }
@@ -121,9 +135,17 @@ class ChartContent extends PureComponent {
     renderToolbarWidgets = () => (
         <ToolbarWidget>
             <ChartMode
-                onChartType={chartType => this.setState({ chartType })}
-                onGranularity={granularity => this.setState({ granularity })}
-            />
+                onChartType={chartType =>
+                    this.setState({
+                        chartType,
+                    })
+                }
+                onGranularity={granularity =>
+                    this.setState({
+                        granularity,
+                    })
+                }
+            />{' '}
             <StudyLegend searchInputClassName="data-hj-whitelist" />
             <DrawTools />
             <Views searchInputClassName="data-hj-whitelist" />
@@ -178,3 +200,6 @@ export default class Chart extends Dialog {
         });
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/Dialogs/Chart.js

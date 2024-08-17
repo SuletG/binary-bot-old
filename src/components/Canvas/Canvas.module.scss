@@ -1,0 +1,156 @@
+@import "../colors.scss";
+
+$minusHeight: 50px;
+.CanvasSmall {
+  // height: calc(90vh - #{$minusHeight});
+  .Canvas_drag {
+    height: calc(100vh - 87px - #{$minusHeight});
+  }
+
+  .rightWrapper {
+    height: 100%;
+    min-height: calc(100vh - 127px);
+  }
+  .rightWrapperHolder {
+    height: 100%;
+    box-sizing: border-box !important;
+  }
+}
+.CanvasForScroll {
+  width: 100vw;
+  height: 100vh;
+  overflow: scroll;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 222222;
+}
+.Canvas {
+  width: 100%;
+  box-shadow: 2px 2px 10px rgba(172, 168, 168, 0.4);
+  font-family: $font;
+  background: $bg-soft;
+}
+.Canvas svg {
+  width: auto;
+}
+.CanvasComponentsHolder {
+  height: calc(100vh - 43px);
+  width: 100%;
+  font-family: $font;
+  background: $bg-hard;
+  overflow: scroll;
+  box-sizing: border-box !important;
+  padding: 0px 40px;
+  position: fixed;
+  top: 43px;
+  left: 0px;
+}
+.Canvas_drag {
+  width: calc(100vw - 310px);
+  height: calc(100vh - 87px);
+  padding: 20px;
+  background: $bg-soft;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.layout {
+  height: 50px;
+  background: white;
+  min-height: 300px;
+}
+.Canvas_flex {
+  display: flex;
+}
+.Canvas_get_code:hover {
+  transform: scale(1.05);
+}
+.rightWrapperHolder {
+  width: 360px;
+  min-width: 360px;
+  height: calc(100vh - 43px);
+  background: $bg-hard;
+  position: relative;
+}
+.rightWrapper {
+  width: 100%;
+  height: calc(100vh - 104px);
+  overflow: auto;
+  padding-top: 10px;
+  background: $bg-hard;
+  position: relative;
+  z-index: 2;
+}
+.emptyText {
+  font-family: $font;
+  padding: $padding;
+  font-size: 14px;
+  color: $color;
+  text-align: center;
+  margin-top: -41px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.save {
+  color: white;
+  font-size: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(141, 71, 249, 1) 0%,
+    rgba(124, 65, 242, 1) 100%
+  );
+  font-family: $font;
+  cursor: pointer;
+  font-weight: 500;
+  margin-right: 10px;
+  border-radius: 6px;
+  transition: 0.2s all;
+  padding: 8px 12px;
+  margin-left: 10px;
+  position: relative;
+  float: right;
+  right:4px;
+  top: 1px;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+.loading {
+  color: white;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+@media only screen and (max-width: 900px) {
+  .Canvas_drag {
+    width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    box-sizing: border-box !important;
+  }
+  .Canvas_flex {
+    display: flex;
+    flex-direction: column-reverse;
+    height: calc(100vh - 43px);
+    overflow: scroll;
+  }
+  .rightWrapperHolder {
+    width: calc(100% - 40px);
+    height:200px;
+    padding: 20px;
+  }
+  .rightWrapperHolder {
+    background: none;
+  }
+  .rightWrapper {
+    background: none;
+    height: auto;
+  }
+  .toggle {
+    display: none;
+  }
+}

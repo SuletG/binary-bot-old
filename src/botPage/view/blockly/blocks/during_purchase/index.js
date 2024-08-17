@@ -4,15 +4,15 @@ import './sell_at_market';
 import './check_sell';
 import './sell_price';
 import { configMainBlock, setBlockTextColor } from '../../utils';
-import { sellContract } from '../images';
+import theme from '../../theme';
 
 Blockly.Blocks.during_purchase = {
     init: function init() {
         this.appendDummyInput()
-            .appendField(new Blockly.FieldImage(sellContract, 25, 25, 'S'))
-            .appendField(translate('(3) Watch and sell your purchased contract'));
+            .appendField(new Blockly.FieldImage('', 0, 0, 'S'))
+            .appendField(`${translate('Watch Purchase')}                             `, 'TITLE');
         this.appendStatementInput('DURING_PURCHASE_STACK').setCheck('SellAtMarket');
-        this.setColour('#2a3052');
+        this.setColour(theme.blockColor);
         this.setTooltip(
             translate('Watch the purchased contract info and sell at market if available (Runs on contract update)')
         );
@@ -23,6 +23,9 @@ Blockly.Blocks.during_purchase = {
             setBlockTextColor(this);
         }
         configMainBlock(ev, 'during_purchase');
+        this.getField('TITLE').textElement_.removeAttribute('style');
+        // this.getField('TITLE').textElement_.style.fill = '#f0b90a !important';
+        Blockly.utils.addClass(this.getField('TITLE').textElement_, 'top-block-title');
     },
 };
 Blockly.JavaScript.during_purchase = block => {
@@ -33,3 +36,6 @@ Blockly.JavaScript.during_purchase = block => {
   `;
     return code;
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/during_purchase/index.js

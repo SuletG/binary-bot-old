@@ -19,7 +19,9 @@ class LimitsContent extends PureComponent {
     }
 
     submit() {
-        this.setState({ error: '' });
+        this.setState({
+            error: '',
+        });
 
         const onSave = () => {
             this.props.onSave({
@@ -44,7 +46,9 @@ class LimitsContent extends PureComponent {
         }
 
         if (this.state.maxTrades <= 0 || this.state.maxTrades > 100) {
-            this.setState({ error: translate('Maximum consecutive trades should be between 1 and 100') });
+            this.setState({
+                error: translate('Maximum consecutive trades should be between 1 and 100'),
+            });
             return;
         }
 
@@ -65,7 +69,9 @@ class LimitsContent extends PureComponent {
                     let callback;
 
                     if (maxLosses) {
-                        this.setState({ maxLosses });
+                        this.setState({
+                            maxLosses,
+                        });
                         callback = resolve;
                     } else {
                         callback = reject;
@@ -101,8 +107,15 @@ class LimitsContent extends PureComponent {
     }
 
     onMaxTradeChange(e) {
-        if (restrictInputCharacter({ input: e.target.value, whitelistRegEx: '^[\\d]*$' })) {
-            this.setState({ maxTrades: e.target.value });
+        if (
+            restrictInputCharacter({
+                input         : e.target.value,
+                whitelistRegEx: '^[\\d]*$',
+            })
+        ) {
+            this.setState({
+                maxTrades: e.target.value,
+            });
         }
     }
 
@@ -127,15 +140,18 @@ class LimitsContent extends PureComponent {
                 style={style.content}
             >
                 <p>
+                    {' '}
                     {translate(
                         'We require you to set trade limitations in compliance with business regulations. Please note that your bot will only stop trading if any or both of the conditions below are met.'
-                    )}
-                </p>
+                    )}{' '}
+                </p>{' '}
                 <div className="input-row">
                     <label>
-                        {translate('Daily limit on losses:')} <strong>{this.getDailyLossesLimit()}</strong>
-                    </label>
+                        {' '}
+                        {translate('Daily limit on losses:')} <strong> {this.getDailyLossesLimit()} </strong>{' '}
+                    </label>{' '}
                     <div className="description">
+                        {' '}
                         {translate(
                             'This is the threshold that limits your potential losses for the day in all Binary.com platforms. Once your total loss reaches or exceeds this amount, your bot will stop trading. Please set a value in the {$0}Self-Exclusion Facilities page{$1}.',
                             [
@@ -147,17 +163,18 @@ class LimitsContent extends PureComponent {
                                 })}" target="_blank">`,
                                 '</a>',
                             ]
-                        )}
-                    </div>
-                </div>
+                        )}{' '}
+                    </div>{' '}
+                </div>{' '}
                 <div className="input-row">
-                    <label htmlFor="limitation-max-trades">{translate('Maximum consecutive trades')}</label>
+                    <label htmlFor="limitation-max-trades"> {translate('Maximum consecutive trades')} </label>{' '}
                     <div className="description">
+                        {' '}
                         {translate(
                             'This is the maximum number of trades that you allow your bot to execute for this run.'
-                        )}
-                    </div>
-                </div>
+                        )}{' '}
+                    </div>{' '}
+                </div>{' '}
                 <div className="input-row">
                     <input
                         ref={el => {
@@ -170,14 +187,15 @@ class LimitsContent extends PureComponent {
                         value={this.state.maxTrades}
                         onChange={(...args) => this.onMaxTradeChange(...args)}
                         data-lpignore={true}
-                    />
-                </div>
-                {this.state.error && <p style={style.error}>{this.state.error}</p>}
+                    />{' '}
+                </div>{' '}
+                {this.state.error && <p style={style.error}> {this.state.error} </p>}{' '}
                 <div className="input-row last" style={style.submitButton}>
                     <button id="submit-trade-limits" type="submit">
-                        {translate('Start')}
-                    </button>
-                </div>
+                        {' '}
+                        {translate('Start')}{' '}
+                    </button>{' '}
+                </div>{' '}
             </form>
         );
     }
@@ -208,3 +226,6 @@ export default class Limits extends Dialog {
         });
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/Dialogs/Limits.js

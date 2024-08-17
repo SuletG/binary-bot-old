@@ -1,8 +1,9 @@
 import { observer as globalObserver } from '../../common/utils/observer';
-import { getToken } from '../../common/utils/storageManager';
+// import { getToken } from '../../common/utils/storageManager';
 import { isProduction } from '../../common/utils/tools';
 import { isIOS } from './osDetect';
 
+let notificationsEnable = true;
 const log = (type, ...args) => {
     if (type === 'warn') {
         console.warn(...args); // eslint-disable-line no-console
@@ -13,13 +14,23 @@ const log = (type, ...args) => {
     const timestamp = `${date.toISOString().split('T')[0]} ${date.toTimeString().slice(0, 8)} ${
         date.toTimeString().split(' ')[1]
     }`;
-    globalObserver.emit('bot.notify', { type, timestamp, message: args.join(':') });
+    globalObserver.emit('bot.notify', {
+        type,
+        timestamp,
+        message: args.join(':'),
+    });
 };
 
 const notify = ({ className, message, position = 'left', sound = 'silent' }) => {
+    if (!notificationsEnable) {
+        return;
+    }
     log(className, message);
-
-    $.notify(message.toString(), { position: `bottom ${position}`, className });
+    $.notify(message.toString(), {
+        position: `bottom ${position}`,
+        className,
+        autoHide: true,
+    });
     if (sound !== 'silent' && !isIOS()) {
         const playPromise = $(`#${sound}`)
             .get(0)
@@ -73,37 +84,56 @@ const notifyError = error => {
         return;
     }
 
-    notify({ className: 'error', message, position: 'right' });
+    notify({
+        className: 'error',
+        message,
+        position : 'right',
+    });
 
-    if (trackJs && isProduction()) {
-        trackJs.console.log(error);
-        trackJs.track(code || error.name);
-    }
+    // if (trackJs && isProduction()) {
+    //     trackJs.console.log(error);
+    //     trackJs.track(code || error.name);
+    // }
 };
 
 const waitForNotifications = () => {
-    const notifList = ['success', 'info', 'warn', 'error'];
+    const notifList = ['success', 'info', 'warn', 'error', 'trace', 'debug'];
 
     globalObserver.register('Notify', notify);
 
     globalObserver.register('Error', notifyError);
 
     notifList.forEach(className =>
-        globalObserver.register(`ui.log.${className}`, message => notify({ className, message, position: 'right' }))
+        globalObserver.register(`ui.log.${className}`, message =>
+            notify({
+                className,
+                message,
+                position: 'right',
+            })
+        )
     );
 };
 
 const logHandler = () => {
-    const token = $('.account-id')
-        .first()
-        .attr('value');
-    const userId = getToken(token).accountName;
+    // const token = $('.account-id')
+    //     .first()
+    //     .attr('value');
+    // const userId = getToken(token).accountName;
 
-    if (trackJs) {
-        trackJs.configure({ userId });
-    }
+    // if (trackJs) {
+    //     trackJs.configure({ userId });
+    // }
 
     waitForNotifications();
 };
 
+export const setNotificationsStatus = status => {
+    notificationsEnable = status;
+};
+
+export const getNotificationsStatus = () => notificationsEnable;
+
 export default logHandler;
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/logger.js

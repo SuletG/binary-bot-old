@@ -88,3 +88,6 @@ Blockly.Blocks.barrier_offset = {
 };
 
 Blockly.JavaScript.barrier_offset = () => '';
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/trade/backwardCompatibility.js

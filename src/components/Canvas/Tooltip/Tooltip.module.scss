@@ -1,0 +1,65 @@
+@import "../../colors.scss";
+
+.tooltip {
+  max-width: 240px;
+  min-width: 160px;
+  border-radius: 8px;
+  background: $bg-hard;
+  color: white;
+  padding: $paddingx2;
+  font-size: 12px;
+  box-shadow: $modal-shadow;
+  position: absolute;
+  transition: ease 0.15s all;
+  top: 0px;
+  transform: translate(calc(-12px - 100%), -50%);
+  z-index: 2;
+  opacity: 0;
+}
+.tooltip:after {
+  content: " ";
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 10px 8px 0 8px;
+  border-color: $bg-hard transparent transparent transparent;
+  transform: translate(0px, -6px) rotate(-90deg);
+  transition: ease 0.15s all;
+  position: absolute;
+  right: -13px;
+  top: 50%;
+}
+.close {
+  cursor: pointer;
+  transition: 0.2s all;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+  // position: absolute;
+  // top:6px;
+  // right:6px;
+}
+.title {
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+.text {
+  color: $color-soft;
+}
+.show {
+  opacity: 1;
+}
+.textWrapper {
+  height: auto;
+  transition: 0.2s all;
+}
+.selected {
+  border: 1px $main solid;
+
+  &:after {
+    border-color: $main transparent transparent transparent;
+  }
+}

@@ -1,0 +1,44 @@
+@import "../../colors.scss";
+.buttons {
+  display: flex;
+  padding: 4px;
+  border-radius: 4px 4px 0px 0px;
+  transition: 0.1s all;
+  cursor: pointer;
+  position: absolute;
+  top: -4px;
+  left: 8px;
+  &:hover {
+    .red {
+      background: #fe615d;
+    }
+    .yellow {
+      background: #fdbb46;
+    }
+    .icon {
+      opacity: 1;
+    }
+  }
+}
+.button {
+  height: 14px;
+  width: 14px;
+  margin-right: 6px;
+  // background: $bg-blur;
+  // backdrop-filter: $blur;
+  border-radius: 50%;
+  // box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.4);
+  transition: 0.1s all;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:last-child {
+    margin-right: 0px;
+  }
+}
+.icon {
+  width: 14px;
+  opacity: 1;
+  color:black !important;
+}

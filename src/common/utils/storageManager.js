@@ -71,3 +71,6 @@ export const set = (varName, value) => {
 export const get = varName => store[varName];
 
 export const remove = varName => delete store[varName];
+
+// WEBPACK FOOTER //
+// ./src/common/utils/storageManager.js

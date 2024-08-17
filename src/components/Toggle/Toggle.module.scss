@@ -1,0 +1,54 @@
+@import "../colors.scss";
+$height: 24px;
+.wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0px;
+}
+.Toggle {
+  cursor: pointer;
+  height: $height;
+  border-radius: 20px;
+  padding: 1px;
+  background: $input-bg;
+  transition: 0.2s all;
+  font-size: 12px;
+  line-height: $height;
+  position: relative;
+  color: $input-color;
+  display: flex;
+
+  &:hover {
+    background: $input-bg-hover;
+    box-shadow: 2px 2px 10px rgba(172,168,168,0.2);
+
+    .text {
+      color:white;
+    }
+  }
+}
+.text {
+  width: 50%;
+  text-align: center !important;
+  transition: 0.15s all;
+  padding:0px 20px;
+  z-index: 2;
+}
+.textSelected {
+  color: white;
+}
+.button {
+  height: $height - 2px;
+  width: 50%;
+  border:1px #8d47f9 solid;
+    background: rgb(80,80,80);
+  // background: linear-gradient(90deg, #8d47f9 0%, #7c41f2 100%);
+  border-radius: 20px;
+  transition: 0.15s all;
+  position: absolute;
+  right: 1px;
+  top: 1px;
+}
+.buttonDesign {
+  right: calc(50% - 3px);
+}

@@ -1,0 +1,164 @@
+@import '../colors.scss';
+.SelectWrapper1{
+    width: 100%;
+    height: 33px;
+    border: 1px rgb(208, 214, 224) solid;
+    border-radius: 4px;
+    cursor: pointer;
+    color:var($color);
+    font-weight: 300;
+    transition:0.2s all;
+    position: relative;
+}
+.inputDisable{
+    opacity:0.5;
+}
+.SelectWrapper1_bottomLabel{
+    flex-direction: column-reverse;
+}
+.SelectWrapper1:hover{
+    border:1px black solid;
+}
+.SelectWrapper1_open:hover{
+    border:1px rgb(208, 214, 224) solid;
+}
+.SelectWrapper1_small{
+    width:auto !important;
+    border-radius: 0px 4px 4px 0px;
+    left:-1px;
+}
+.SelectWrapper1_small .SelectWrapper1_input{
+    padding:4px;
+}
+.SelectWrapper1_small .SelectWrapper1_icon{
+    display: none;
+}
+.SelectWrapper1_small .SelectWrapper1_theValue{
+    width: 100%;
+    text-align: center;
+}
+.SelectWrapper1_input{
+    width:100%;
+    height:100%;
+    box-sizing: border-box !important;
+    justify-content: space-between;
+    padding:8px;
+    display: flex;
+    align-items:center;
+}
+.SelectWrapper1_label{
+    background:white;
+    padding:0px 4px;
+    transition:0.2s all;
+    font-size:12px;
+    position: absolute;
+    top:9px;
+    left:10px;
+}
+.SelectWrapper1_labelLeft{
+    width: $label-width;
+}
+.SelectWrapper1_icon{
+    width:8px;
+    margin:0px;
+    color:var($color);
+}
+.SelectWrapper1_open{
+    box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.1), 0px 8px 10px 1px rgba(0,0,0,0.07), 0px 3px 14px 2px rgba(0,0,0,0.06);
+}
+.SelectWrapper1_open .SelectWrapper1_label, .SelectWrapper1_value .SelectWrapper1_label{
+    top:-8px;
+}
+.SelectWrapper1_list{
+    width:100%;
+    min-width: 60px;
+    max-height:300px;
+    overflow: scroll;
+    background:white;
+    padding:4px 0px;
+    box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.1), 0px 8px 10px 1px rgba(0,0,0,0.07), 0px 3px 14px 2px rgba(0,0,0,0.06);
+    z-index: 1000;
+    border-radius: 4px;
+    position: absolute;
+    top:calc(100% + 10px);
+    right:0px;
+}
+.SelectWrapper1_list_item{
+    padding:8px 16px;
+    font-size:14px;
+    transition:0.2s all;
+    text-transform: capitalize;
+}
+.SelectWrapper1_list_itemSelected{
+    color:black;
+    background:rgb(248,248,248);
+}
+.SelectWrapper1_list_item:hover {
+    background:rgb(240,240,240)
+}
+.SelectWrapper1_theValue{
+    text-transform: capitalize;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color:black;
+    font-size:12px;
+}
+.SelectWrapper1_leftLabel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size:12px;
+    transition:0.2s all;
+    color:$color;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1{
+    height:26px;
+    width: calc(100% - #{$label-width});
+    background:$input-bg;
+    color:$input-color;
+    border:none;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1:hover, .SelectWrapper1_leftLabel .SelectWrapper1:focus {
+    background:$input-bg-hover;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1_theValue{
+    color:$input-color;
+    transition:0.2s all;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1_icon {
+    color:$input-color;
+    transition:0.2s all;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1:hover .SelectWrapper1_icon, .SelectWrapper1_leftLabel .SelectWrapper1:hover .SelectWrapper1_theValue {
+    color:white;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1_list{
+    background:$input-bg;
+    color:$input-color;
+    top:calc(100% + 4px);
+}
+.SelectWrapper1_leftLabel .SelectWrapper1_list_item{
+    padding:4px 8px;
+    font-size:12px;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1_list_item:hover{
+    color:white;
+    background:$button-bg;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1_list_itemSelected{
+    background:$input-bg;
+    cursor: default;
+    color:$color;
+}
+.SelectWrapper1_bottomLabel .SelectWrapper1{
+    width: 100%;
+}
+.SelectWrapper1_bottomLabel .SelectWrapper1_labelLeft{
+    font-size: 10px;
+    color: rgb(178,178,198);
+    text-align: center;
+}
+.SelectWrapper1_leftLabel .SelectWrapper1_placeholder{
+    color:$input-placeholder;
+}

@@ -1,0 +1,171 @@
+@import "../../components/colors.scss";
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+  z-index: 100000;
+  color: $color;
+  font-family: $font;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 12311111122;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
+.background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+}
+.box {
+  width: 300px;
+  padding: 40px;
+  display: flex;
+  border-radius: 6px;
+  transform: translate(-50%, -50%);
+  background: white;
+  box-shadow: 0 25px 75px rgba(16, 30, 54, 0.25);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.SignUp {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-radius: 6px;
+}
+.SignUp_title {
+  font-family: $font;
+  text-align: center;
+  font-weight: 500;
+  line-height: 24px;
+  font-size: 24px;
+  color: black;
+}
+.SignUp_subtitle {
+  margin: 20px 0px;
+  text-align: center;
+  color: rgb(30, 30, 30);
+  line-height: 10px;
+
+  span {
+    font-size: 28px;
+    font-weight: bold;
+  }
+}
+.SignUp_input {
+  width: 100%;
+  margin-top: 24px;
+  float: left;
+
+  input {
+    background: white !important;
+    border: 1px solid #e9ebf0 !important;
+    padding: 8px 12px !important;
+    font-size: 15px !important;
+    line-height: 22px !important;
+    color: black !important;
+
+    &:focus {
+      border: 1px solid rgb(220, 220, 220) !important;
+    }
+
+    &::placeholder {
+      color: rgb(200, 200, 200);
+    }
+  }
+}
+.inputLabel {
+  width: 80px;
+  color: #292d34;
+  font-weight: 500;
+  font-size: 14px;
+}
+.image {
+  width: 400px;
+  margin-bottom: 20px;
+  transform: translateX(-50%);
+  position: relative;
+  left: 50%;
+}
+.SignUp_button {
+  width: 310px;
+  height: 50px;
+  margin: 20px 0px;
+  line-height: 50px;
+  color: white;
+  font-size: 12px;
+  background: #7b68ee;
+  text-align: center !important;
+  font-family: $font;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: 0.2s all;
+  font-size: 18px;
+  transform: translateX(-50%);
+  position: relative;
+  left: 50%;
+
+  &:hover {
+    box-shadow: 0px 0px 4px rgba(141, 71, 249, 1);
+    transform: scale(1.02) translateX(-50%);
+  }
+}
+.SignUp_icon {
+  margin-left: 10px;
+}
+.SignUp_selectTitle {
+  font-size: 14px;
+  font-family: $font;
+  color: var($color);
+}
+.SignUp_login {
+  font-family: $font;
+  color: rgb(140, 140, 140);
+  font-size: 12px;
+  text-align: center;
+}
+.SignUp_loginUpLink {
+  cursor: pointer;
+}
+.SignUp_error {
+  width: 100%;
+  margin-top: 15px;
+  font-family: $font;
+  text-align: center;
+  color: red;
+  position: relative;
+  float: left;
+}
+.SignUp_close {
+  color: rgb(230, 230, 230);
+  transition: 0.2s all;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+.SignUp_close:hover {
+  color: $main;
+}
+.table {
+  margin-top: 10px;
+  color: rgb(50, 50, 50);
+}
+.row {
+  padding: 16px 0px;
+  border-bottom: 1px rgb(240, 240, 240) solid;
+}
+.support {
+  margin-top: 50px;
+  color: rgb(200, 200, 200);
+
+  a {
+    color: rgb(170, 170, 170);
+  }
+}

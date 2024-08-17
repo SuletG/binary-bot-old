@@ -2,6 +2,7 @@
 import { translate } from '../../../../../common/i18n';
 import { mainScope } from '../../relationChecker';
 import candleInterval, { getGranularity } from './candleInterval';
+import theme from '../../theme';
 
 Blockly.Blocks.get_ohlc = {
     init: function init() {
@@ -12,12 +13,15 @@ Blockly.Blocks.get_ohlc = {
         candleInterval(this);
         this.setOutput(true, 'Candle');
         this.setInputsInline(true);
-        this.setColour('#f2f2f2');
+        this.setColour(theme.subBlockColor);
         this.setTooltip(translate('Get the nth recent candle'));
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
     },
     onchange: function onchange(ev) {
         mainScope(this, ev, 'Get Candle');
+        this.childBlocks_.map(a => {
+            a.svgPath_.style.fill = theme.shadowDefault;
+            a.svgPathDark_.style.display = 'none';
+        });
     },
 };
 
@@ -28,3 +32,6 @@ Blockly.JavaScript.get_ohlc = block => {
         Blockly.JavaScript.ORDER_ATOMIC,
     ];
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/ticks/get_ohlc.js

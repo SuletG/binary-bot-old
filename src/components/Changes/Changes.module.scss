@@ -1,0 +1,33 @@
+@import '../colors.scss';
+
+.Changes{
+    width:100%;
+    overflow: auto;
+}
+.Changes_text{
+    width:80%;
+    color:rgb(200,200,200);
+    font-family: $font;
+    text-align: center;
+    font-size:12px;
+    padding:20px 0px 30px 0px;
+    position: relative;
+    left:10%;
+}
+.Changes_wrapper{
+    width:calc(100% - 20px);
+    height:auto;
+    cursor: pointer;
+    border-radius: 4px;
+    border:1px rgb(48,48,66) solid;
+    background:$bg-hard;
+    margin-bottom:15px;
+    margin-left:10px;
+    padding:15px;
+    box-sizing: border-box !important;
+    transition:0.3s all;
+    position: relative;
+}
+.Changes_wrapper:hover{
+    border:1px rgb(210,210,210) solid;
+}

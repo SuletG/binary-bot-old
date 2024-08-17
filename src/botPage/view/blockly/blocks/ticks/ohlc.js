@@ -2,6 +2,7 @@
 import { translate } from '../../../../../common/i18n';
 import { mainScope } from '../../relationChecker';
 import candleInterval, { getGranularity } from './candleInterval';
+import theme from '../../theme';
 
 Blockly.Blocks.ohlc = {
     init: function init() {
@@ -9,9 +10,8 @@ Blockly.Blocks.ohlc = {
         candleInterval(this);
         this.setInputsInline(true);
         this.setOutput(true, 'Array');
-        this.setColour('#f2f2f2');
+        this.setColour(theme.subBlockColor);
         this.setTooltip(translate('Returns the candle list'));
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
     },
     onchange: function onchange(ev) {
         mainScope(this, ev, 'Candles List');
@@ -21,3 +21,6 @@ Blockly.JavaScript.ohlc = block => [
     `Bot.getOhlc({ granularity: ${getGranularity(block)} })`,
     Blockly.JavaScript.ORDER_ATOMIC,
 ];
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/ticks/ohlc.js

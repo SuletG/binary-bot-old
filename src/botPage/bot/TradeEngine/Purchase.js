@@ -15,13 +15,22 @@ export default Engine =>
             if (this.store.getState().scope !== BEFORE_PURCHASE) {
                 return Promise.resolve();
             }
-
+            // console.log(this);
+            const template = this.proposalTemplates.find(a => a.contract_type === contractType);
+            // console.log(template);
             const { currency, proposal } = this.selectProposal(contractType);
             const onSuccess = response => {
                 // Don't unnecessarily send a forget request for a purchased contract.
-                this.data.proposals = this.data.proposals.filter(p => p.id !== response.echo_req.buy);
+                const data =
+                    this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                        ? this.dataVirtual
+                        : this.data;
+                data.proposals = data.proposals.filter(p => p.id !== response.echo_req.buy);
                 const { buy } = response;
-                GTM.pushDataLayer({ event: 'bot_purchase', buy_price: proposal.ask_price });
+                GTM.pushDataLayer({
+                    event    : 'bot_purchase',
+                    buy_price: proposal.ask_price,
+                });
 
                 contractStatus({
                     id  : 'contract.purchase_recieved',
@@ -41,9 +50,11 @@ export default Engine =>
                 info({
                     accountID      : this.accountInfo.loginid,
                     totalRuns      : this.updateAndReturnTotalRuns(),
-                    transaction_ids: { buy: buy.transaction_id },
-                    contract_type  : contractType,
-                    buy_price      : buy.buy_price,
+                    transaction_ids: {
+                        buy: buy.transaction_id,
+                    },
+                    contract_type: contractType,
+                    buy_price    : buy.buy_price,
                 });
             };
 
@@ -56,8 +67,34 @@ export default Engine =>
                 currency,
             });
 
-            const action = () => this.api.buyContract(proposal.id, proposal.ask_price);
-
+            const action = () => {
+                const api =
+                    this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                        ? this.virtualApi
+                        : this.api;
+                if (
+                    !!this.data.copyTradingTokens &&
+                    this.data.copyTradingTokens.length > 0 &&
+                    (!this.virtualSettings.active || !this.virtualSettings.valid || !this.virtualSettings.ongoing)
+                ) {
+                    const obj = {
+                        buy_contract_for_multiple_accounts: '1',
+                        price                             : proposal.ask_price,
+                        tokens                            : this.data.copyTradingTokens,
+                        parameters                        : JSON.parse(JSON.stringify(template)),
+                    };
+                    // this.api.events.on('*', r => {
+                    //     console.log(r);
+                    // })
+                    delete obj.parameters.passthrough;
+                    // console.log(JSON.stringify(obj));
+                    api.socket.send(JSON.stringify(obj));
+                }
+                const obj = JSON.parse(JSON.stringify(template));
+                delete obj.passthrough;
+                return api.buyContractParams(obj, 100000);
+                // return api.buyContract(proposal.id, proposal.ask_price);
+            };
             if (!this.options.timeMachineEnabled) {
                 return doUntilDone(action).then(onSuccess);
             }
@@ -88,4 +125,10 @@ export default Engine =>
         regeneratePurchaseReference = () => {
             purchaseReference = getUUID();
         };
+        getCopyTradingTokens = tokens => {
+            this.data.copyTradingTokens = tokens.map(a => a.trim());
+        };
     };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/Purchase.js

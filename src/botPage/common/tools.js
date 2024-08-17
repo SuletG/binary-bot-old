@@ -8,3 +8,6 @@ export const roundBalance = ({ currency, balance }) => {
 const hasOwnProperty = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
 
 export const isVirtual = tokenInfo => hasOwnProperty(tokenInfo, 'loginInfo') && tokenInfo.loginInfo.is_virtual;
+
+// WEBPACK FOOTER //
+// ./src/botPage/common/tools.js

@@ -1,0 +1,64 @@
+@import "../../colors.scss";
+
+.ControlBarButton {
+  width: 26px;
+  height: 26px;
+  padding: 2px;
+  display: flex;
+  margin: 0px 4px;
+  font-family: $font;
+  color: $color;
+  border-radius: 50%;
+  flex-direction: column;
+  cursor: pointer;
+  align-items: center;
+  transition: 0.2s all;
+  position: relative;
+
+  &:hover {
+    .hover {
+      display: block;
+    }
+  }
+}
+.remove_cursor {
+  cursor: default;
+}
+.ControlBarButton:hover {
+  transform: scale(1.05);
+  border-radius: 8px;
+}
+.ControlBarButton:hover .icon {
+  margin-top: -5px;
+  color: $color;
+}
+.ControlBarButton:hover .text {
+  opacity: 1;
+  color: $color;
+}
+.icon {
+  transition: 0.2s all;
+  text-shadow: 1px 1px 2px white;
+  transform: translateY(-50%);
+  color: $color;
+  font-size: 16px;
+  position: relative;
+  top: 50%;
+}
+.text {
+  margin: 0px;
+  margin-top: 4px;
+  color: $color;
+  font-weight: 500;
+  opacity: 0;
+  transition: 0.2s all;
+  position: absolute;
+  bottom: -10px;
+  z-index: 3;
+}
+.ControlBar_controls_box:hover .text {
+  opacity: 1;
+}
+.hover {
+  display: none;
+}

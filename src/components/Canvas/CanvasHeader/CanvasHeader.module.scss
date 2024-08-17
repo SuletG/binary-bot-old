@@ -1,0 +1,64 @@
+@import "../../colors.scss";
+.header {
+  padding: 8px 8px;
+  display: flex;
+  background: $bg-hard;
+  border-bottom: $black-border;
+  align-items: center;
+  justify-content: space-between;
+}
+.backHolder {
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  font-weight: normal;
+  color: $color;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s all;
+
+  &:hover {
+    color: $main;
+  }
+}
+.getCode {
+  display: flex;
+  align-items: center;
+}
+.Canvas_get_code {
+  color: white;
+  font-size: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(141, 71, 249, 1) 0%,
+    rgba(124, 65, 242, 1) 100%
+  );
+  font-family: $font;
+  cursor: pointer;
+  font-weight: 500;
+  margin-right: 10px;
+  border-radius: 6px;
+  transition: 0.2s all;
+  padding: 8px 12px;
+  margin-left: 10px;
+}
+.Canvas_get_code_disabled {
+  background: none;
+  // display: none;
+  // border:1px rgb(141,71,249) solid;
+  color: $color;
+}
+.header_right{
+  display: flex;
+  align-items: center;
+  max-height: 40px;
+}
+.CanvasClose {
+  color: $button-bg;
+  cursor: pointer;
+}
+.backIcon {
+  margin-right: 6px;
+}

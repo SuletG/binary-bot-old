@@ -78,3 +78,6 @@ export const xml = dom => {
     });
     return dom;
 };
+
+// WEBPACK FOOTER //
+// ./src/common/i18n.js

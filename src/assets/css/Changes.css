@@ -1,0 +1,152 @@
+.superdeveloper * {
+    margin: 0px;
+}
+
+.superdeveloper.cssChanges123 {
+    width: 200px;
+    /* max-height:300px; */
+    overflow: hidden;
+    line-height: 16px;
+    border-radius: 10px 10px 0px 0px;
+    box-shadow: 0px 5px 15px rgb(220, 220, 220);
+    background: #e4effe;
+    background: white;
+    font-size: 11px;
+    direction: ltr;
+    text-align: left;
+    position: fixed;
+    bottom: 0px;
+    right: 20px;
+    z-index: 10000000000000;
+}
+
+.superdeveloper.cssChanges123_minimazed .cssChanges123_allContent {
+    max-height: 0px;
+}
+
+.superdeveloper.cssChanges123_minimazed .cssChanges123_header {
+    cursor: pointer;
+}
+
+.cssChanges123_allContent {
+    transition: 0.2s max-height;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.superdeveloper.cssChanges123_wrapper {
+    width: calc(100% - 10px);
+    position: relative;
+    left: 5px;
+}
+
+.superdeveloper.cssChanges123_header {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.superdeveloper.cssChanges123_header_button {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    border-radius: 50%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    position: relative;
+    left: 5px;
+}
+
+.superdeveloper.cssChanges123_header_button>img {
+    width: 8px;
+    height: 10px;
+    opacity: 0;
+    position: relative;
+    left: 3px;
+}
+
+.superdeveloper.cssChanges123_header_minimaze {
+    background: #ffbd2e;
+}
+
+.superdeveloper.cssChanges123_header_buttons {
+    display: flex;
+}
+
+.superdeveloper.cssChanges123_header_buttons:hover img {
+    opacity: 0.5;
+}
+
+.superdeveloper.cssChanges123_header_minimaze>img {
+    top: -3px;
+    display: inline;
+    transition: 0.2s all;
+}
+
+.superdeveloper.cssChanges123_box_footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.superdeveloper.cssChanges123_header_close {
+    background: #ff6059;
+}
+
+.superdeveloper.cssChanges123_header_close>img {
+    top: 0px;
+}
+
+.superdeveloper.cssChanges123_box {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 0px;
+    border-bottom: 1px rgb(240, 240, 240) solid;
+    background: white;
+    position: relative;
+}
+
+.superdeveloper.cssChanges123_box_deletedRule {
+    text-decoration: line-through;
+}
+
+.superdeveloper.cssChanges123_box:hover .superdeveloper.cssChanges123_box_title {
+    color: #3d5afe;
+}
+
+.superdeveloper.cssChanges123_boxNoPadding {
+    padding-top: 0px;
+}
+
+.superdeveloper.cssChanges123_box_title {
+    cursor: pointer;
+    font-size: 10px;
+    transition: 0.2s all;
+    font-family: monaco, Consolas, Lucida Console, monospace;
+    color: #95a4b8;
+}
+
+.superdeveloper.cssChanges123_box_title span {
+    font-family: monaco, Consolas, Lucida Console, monospace;
+}
+
+.superdeveloper.cssChanges123_box_content {
+    font-weight: 10px;
+    font-family: monaco, Consolas, Lucida Console, monospace;
+    color: black;
+    width: calc(100% - 16px);
+    margin-left: 16px;
+}
+
+.cssChanges123_markChange {
+    box-shadow: 0px 0px 1px 1px #3d5afe;
+    transition: 0.2s all;
+}
+
+.superdeveloper.cssChanges123_box_content_value {
+    /* color:blue; */
+}
+
+.superdeveloper.cssChanges123_box_content_key {
+    color: #c60813;
+}

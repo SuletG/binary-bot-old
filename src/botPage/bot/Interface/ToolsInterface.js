@@ -1,12 +1,16 @@
 import CandleInterface from './CandleInterface';
 import MiscInterface from './MiscInterface';
 import IndicatorsInterface from './IndicatorsInterface';
+import MoneyManagementInterface from './MoneyManagementsInterface';
+import RiskManagementsInterface from './RiskManagementsInterface';
+import ListsInterface from './ListsInterface';
 import WebhookInterface from './WebhookInterface';
 import { translate } from '../../../common/i18n';
 
 // prettier-ignore
 export default Interface => class extends IndicatorsInterface(
-    MiscInterface(CandleInterface(WebhookInterface(Interface)))) {
+    RiskManagementsInterface(MiscInterface(CandleInterface(
+        WebhookInterface(MoneyManagementInterface(ListsInterface(Interface))))))) {
     getToolsInterface() {
         return {
             getTime   : () => parseInt(new Date().getTime() / 1000),
@@ -46,28 +50,28 @@ export default Interface => class extends IndicatorsInterface(
                 if (typeof dateTimeString === 'string') {
                     const dateTime = dateTimeString
                         .replace(/[^0-9.:-\s]/g, '')
-                        .replace(/\s+/g,' ')
+                        .replace(/\s+/g, ' ')
                         .trim()
-                        .split(' ');        
-                
+                        .split(' ');
+
                     const d = /^[12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
                     const t = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])(:([0-5][0-9])?)?$/;
-            
+
                     let validatedDateTime;
-                
-                    if(dateTime.length >= 2) {
+
+                    if (dateTime.length >= 2) {
                         validatedDateTime = d.test(dateTime[0]) && t.test(dateTime[1]) ? `${dateTime[0]}T${dateTime[1]}` : null;
-                    } else if(dateTime.length === 1) {
+                    } else if (dateTime.length === 1) {
                         validatedDateTime = d.test(dateTime[0]) ? dateTime[0] : null;
                     } else {
                         validatedDateTime = null;
                     }
 
-                    if(validatedDateTime) {
+                    if (validatedDateTime) {
                         const dateObj = new Date(validatedDateTime);
                         // eslint-disable-next-line no-restricted-globals
-                        if(dateObj instanceof Date && !isNaN(dateObj)) {
-                            return  dateObj.getTime() / 1000;
+                        if (dateObj instanceof Date && !isNaN(dateObj)) {
+                            return dateObj.getTime() / 1000;
                         }
                     }
                     return invalidDatetime();
@@ -78,6 +82,12 @@ export default Interface => class extends IndicatorsInterface(
             ...this.getMiscInterface(),
             ...this.getIndicatorsInterface(),
             ...this.getWebhookInterface(),
+            ...this.getMoneyManagementsInterface(),
+            ...this.getRiskManagementsInterface(),
+            ...this.getListsInterface(),
         };
     }
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/Interface/ToolsInterface.js

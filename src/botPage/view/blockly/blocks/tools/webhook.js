@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { translate } from '../../../../../common/i18n';
 import { expectValue } from '../shared';
+import theme from '../../theme';
 
 Blockly.Blocks.webhook = {
     init() {
@@ -12,7 +13,7 @@ Blockly.Blocks.webhook = {
                     name: 'WEBHOOK_URL',
                 },
             ],
-            colour           : '#dedede',
+            colour           : theme.subBlockColor,
             previousStatement: null,
             nextStatement    : null,
             tooltip          : translate('Sends a POST request to a URL'),
@@ -113,6 +114,13 @@ Blockly.Blocks.webhook = {
         }
     },
     onchange: function onchange(ev) {
+        this.childBlocks_.map(a => {
+            if (a.isShadow_) {
+                a.svgPath_.style.fill = theme.underBlockColor;
+                a.svgPathDark_.style.display = 'none';
+                // a.svgGroup_.children[a.type === 'text' ? 4 : 3].children[0].style.fill = theme.shadowDefault;
+            }
+        });
         if (!this.workspace || this.isInFlyout || this.workspace.isDragging()) {
             return;
         }
@@ -149,3 +157,6 @@ Blockly.JavaScript.webhook = block => {
 
     return `Bot.sendWebhook(${url}, {${params}});\n`;
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/tools/webhook.js

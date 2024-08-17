@@ -8,4 +8,12 @@ export const contractSettled = c => globalObserver.emit('contract.settled', c);
 
 export const info = i => globalObserver.emit('bot.info', i);
 
-export const notify = (className, message) => globalObserver.emit('Notify', { className, message, position: 'right' });
+export const notify = (className, message) =>
+    globalObserver.emit('Notify', {
+        className,
+        message,
+        position: 'right',
+    });
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/broadcast.js

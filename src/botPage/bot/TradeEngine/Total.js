@@ -5,12 +5,14 @@ import { createError } from '../../common/error';
 import { observer as globalObserver } from '../../../common/utils/observer';
 
 const skeleton = {
-    totalProfit: 0,
-    totalWins  : 0,
-    totalLosses: 0,
-    totalStake : 0,
-    totalPayout: 0,
-    totalRuns  : 0,
+    totalProfit       : 0,
+    totalWins         : 0,
+    totalWinsVirtual  : 0,
+    totalLosses       : 0,
+    totalLossesVirtual: 0,
+    totalStake        : 0,
+    totalPayout       : 0,
+    totalRuns         : 0,
 };
 
 const globalStat = {};
@@ -33,40 +35,66 @@ export default Engine =>
         updateTotals(contract) {
             const { sell_price: sellPrice, buy_price: buyPrice, currency } = contract;
 
-            const profit = Number(roundBalance({ currency, balance: Number(sellPrice) - Number(buyPrice) }));
+            const profit = Number(
+                roundBalance({
+                    currency,
+                    balance: Number(sellPrice) - Number(buyPrice),
+                })
+            );
 
             const win = profit > 0;
-
             const accountStat = this.getAccountStat();
+            if (!this.virtualSettings.ongoing || !this.virtualSettings.active || !this.virtualSettings.valid) {
+                accountStat.totalWins += win ? 1 : 0;
 
-            accountStat.totalWins += win ? 1 : 0;
+                accountStat.totalLosses += !win ? 1 : 0;
 
-            accountStat.totalLosses += !win ? 1 : 0;
+                this.sessionProfit = roundBalance({
+                    currency,
+                    balance: Number(this.sessionProfit) + Number(profit),
+                });
 
-            this.sessionProfit = roundBalance({ currency, balance: Number(this.sessionProfit) + Number(profit) });
-
-            accountStat.totalProfit = roundBalance({
-                currency,
-                balance: Number(accountStat.totalProfit) + Number(profit),
-            });
-            accountStat.totalStake = roundBalance({
-                currency,
-                balance: Number(accountStat.totalStake) + Number(buyPrice),
-            });
-            accountStat.totalPayout = roundBalance({
-                currency,
-                balance: Number(accountStat.totalPayout) + Number(sellPrice),
-            });
-
+                accountStat.totalProfit = roundBalance({
+                    currency,
+                    balance: Number(accountStat.totalProfit) + Number(profit),
+                });
+                accountStat.totalStake = roundBalance({
+                    currency,
+                    balance: Number(accountStat.totalStake) + Number(buyPrice),
+                });
+                accountStat.totalPayout = roundBalance({
+                    currency,
+                    balance: Number(accountStat.totalPayout) + Number(sellPrice),
+                });
+            } else {
+                accountStat.totalWinsVirtual += win ? 1 : 0;
+                accountStat.totalLossesVirtual += !win ? 1 : 0;
+            }
+            const {
+                accountID,
+                totalProfit,
+                totalWins,
+                totalWinsVirtual,
+                totalLosses,
+                totalLossesVirtual,
+                totalStake,
+                totalPayout,
+            } = Object.assign(
+                {
+                    accountID: this.accountInfo.loginid,
+                },
+                accountStat
+            );
+            // console.log(accountID, totalProfit, totalWins, totalWinsVirtual, totalLosses, totalLossesVirtual, totalStake, totalPayout);
             info({
-                profit,
-                contract,
-                accountID  : this.accountInfo.loginid,
-                totalProfit: accountStat.totalProfit,
-                totalWins  : accountStat.totalWins,
-                totalLosses: accountStat.totalLosses,
-                totalStake : accountStat.totalStake,
-                totalPayout: accountStat.totalPayout,
+                accountID,
+                totalProfit,
+                totalWins,
+                totalWinsVirtual,
+                totalLosses,
+                totalLossesVirtual,
+                totalStake,
+                totalPayout,
             });
 
             if (win) {
@@ -78,8 +106,9 @@ export default Engine =>
         updateAndReturnTotalRuns() {
             this.sessionRuns++;
             const accountStat = this.getAccountStat();
-
-            return ++accountStat.totalRuns;
+            return this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                ? accountStat.totalRuns
+                : ++accountStat.totalRuns;
         }
         /* eslint-disable class-methods-use-this */
         getTotalRuns() {
@@ -124,3 +153,6 @@ export default Engine =>
             return globalStat[accountID];
         }
     };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/Total.js

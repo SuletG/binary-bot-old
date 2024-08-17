@@ -1,0 +1,114 @@
+@import "../colors.scss";
+.Fields {
+  width: 306px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0);
+  padding-bottom: calc(#{$padding} * 2);
+}
+.FieldsFromCanvas {
+  width: 100%;
+  display: flex;
+  box-sizing: border-box;
+  align-items: flex-end;
+}
+.allFields {
+  width: 100%;
+  display: flex;
+  box-sizing: border-box !important;
+  padding-left: calc(#{$padding} * 3);
+  flex-wrap: wrap;
+
+  .allFields{
+    padding-left: 0px;
+  }
+}
+.Fields_Inner {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-left: 0px !important;
+}
+.Fields_row {
+  width: 50%;
+  box-sizing: border-box !important;
+  font-size: 12px;
+  font-family: $font;
+  padding-top: $padding;
+  padding-right: calc(#{$padding} * 1);
+}
+.helperClass{
+  z-index: 20000000000000000;
+}
+.treeElements{
+  .Fields_row{
+    width:33%;
+  }
+  .Field_sectionSpacing_select{
+    margin-right:0px;
+  }
+}
+.Fields_rowBig {
+  width: 100%;
+}
+.Fields > .Fields_row:first-child {
+  padding-top: 0px;
+}
+.Fields_rowMargin {
+}
+.Fields_SelectWrapper {
+  width: 149px;
+}
+.FieldsFromCanvas .Fields_SelectWrapper {
+  width: 100%;
+}
+.Fields_rowBlack {
+  color: white;
+  font-size: 14px;
+  margin-bottom: $padding;
+}
+.fields_section {
+  width: 100%;
+  display: flex;
+
+  .allFields {
+    padding-left: 0px;
+  }
+}
+.fields_sectionLabel,
+.fields_sectionLabel.Fields_row {
+  width: calc(100% - #{$label-width});
+  margin-left:$label-width;
+}
+.Field_sectionSpacing {
+  box-sizing: border-box !important;
+  width: 50%;
+}
+.Field_sectionSpacing_select {
+  width: 50%;
+  margin-right: $padding;
+}
+.Field_sectionSpacing:last-child {
+  margin-right: 0px;
+}
+.fileds_spacer {
+  margin-top: calc(#{$padding} * 2);
+}
+.Fields_trash {
+  cursor: pointer;
+  transition: 0.2s all;
+  position: relative;
+  top: 6px;
+  left: -4px;
+  font-size: 13px;
+  opacity: 0;
+}
+.Fields_row:hover .Fields_trash {
+  opacity: 1;
+}
+.Fields_trash:hover {
+  color: $main;
+  transform: scale(1.05);
+}

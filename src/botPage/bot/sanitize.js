@@ -71,3 +71,6 @@ export const expectCandles = candles => {
     }
     return candles;
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/sanitize.js

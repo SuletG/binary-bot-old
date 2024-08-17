@@ -1,0 +1,176 @@
+@import '../colors.scss';
+.InputWrapper {
+    position: relative;
+    display: flex;
+    line-height: 10px;
+    transition:0.2s all;
+}
+.inputDisable{
+    opacity:0.5;
+}
+.InputWrapper fieldset{
+    border-color: rgb(208, 214, 224);
+}
+.InputWrapper .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    z-index: 2;
+    border-color: rgb(38,100,251);
+}
+.InputWrapper_inputColor{
+    height:35px;
+    width:31px;
+    padding:0px;
+    margin:0px;
+    cursor: pointer;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    border:1px rgb(208, 214, 224) solid;
+    border-radius: 0px 4px 4px 0px;
+    outline: none;
+    position: relative;
+    left:-1px;
+}
+.InputWrapper_inputColor:hover{
+    border:1px black solid;
+}
+.InputWrapper_inputColor::-webkit-color-swatch{
+    border: none;
+}
+.InputWrapper_input:hover, .InputWrapper_input:focus{
+    z-index: 2;
+}
+.InputWrapper_input label{
+    font-size: 12px;
+    transform: translate(14px, 12px) scale(1);
+}
+.InputWrapper_input input{
+    height:15px;
+    width: 95px;
+    box-sizing: content-box;
+    text-align: left;
+    margin:0px;
+    z-index:1;
+    color:rgba(0,0,0,0.87) !important;
+    padding:10px !important;
+    outline: none !important;
+    border:none !important;
+    /* background:none !important; */
+    font-size:12px !important;
+}
+.InputWrapper_input fieldset{
+    border-radius:4px 0px 0px 4px;
+}
+.InputWrapper_selectList{
+    position: relative;
+    left:-1px;
+}
+.InputWrapper_selectList legend span{
+    display: none;
+}
+.InputWrapper_selectList .MuiSelect-outlined.MuiSelect-outlined{
+    height:15px;
+    width:31px;
+    max-width: 31px;
+    line-height: 15px;
+    font-size:12px;
+    padding:10px 0px;
+    text-align: center;
+    z-index: 1;
+}
+.InputWrapper_selectList .MuiSelect-iconOutlined{
+    display: none;
+}
+.InputWrapper_selectList{
+    border-radius: 0px 4px 4px 0px;
+}
+.InputWrapper_list{
+    font-size:14px !important;
+}
+.InputWrapper_leftLabel {
+    width:100%;
+    align-items: center;
+    display: flex;
+}
+.InputWrapper_leftLabel .InputWrapper_input {
+    background:$input-bg;
+    border-radius: 4px;
+    border:none;
+    transition:0.2s all;
+}
+.InputWrapper_leftLabel .InputWrapper_input:hover, .InputWrapper_leftLabel .Mui-focused {
+    background:$input-bg-hover !important;
+}
+.InputWrapper_leftLabel .InputWrapper_input{
+    width: calc(100% - #{$label-width});
+    position: relative;
+}
+.InputWrapper_leftLabel .InputWrapper_input input {
+    width: 100%;
+}
+.InputWrapper_leftLabel .InputWrapper_input input{
+    height:8px;
+    color:$input-color !important;
+    transition:0.2s all;
+}
+.InputWrapper_leftLabel .InputWrapper_input input:hover , .InputWrapper_leftLabel .InputWrapper_input input:focus{
+    color:white !important;
+}
+.InputWrapper_leftLabel fieldset {
+    border:none;
+}
+.InputWrapper_inputColorWrapper{
+    width:calc(100% - 34px - #{$label-width}) !important;
+}
+.InputWrapper_leftLabel .InputWrapper_inputColor{
+    width:28px;
+    height:28px;
+    margin-left:6px;
+    border:none;
+    border-radius: 4px;
+}
+.InputWrapper_SelectKind {
+    z-index: 2;
+    position: absolute;
+    right:0px;
+}
+.InputWrapper_SelectKind_zIndex {
+    z-index: 3;
+}
+.InputWrapper_SelectKind .SelectWrapper1_theValue{
+    font-size:10px;
+    color:$input-color-bold;
+}
+.InputWrapper_input input::-webkit-outer-spin-button,
+.InputWrapper_input input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0!important;
+}
+
+.InputWrapper_bottomLabel{
+    width: 100%;
+    flex-direction: column-reverse;
+}
+.InputWrapper_bottomLabel .InputWrapper_input {
+    width: 100%;
+}
+.InputWrapper_label {
+    width: $label-width;
+    height: 28px;
+    font-size:12px;
+    text-overflow: ellipsis;
+    overflow: hidden; 
+    color:$color;
+}
+.InputWrapper_bottomLabel .InputWrapper_label{
+    /* margin-top:6px; */
+    text-align: center;
+}
+.InputWrapper_bottomLabel .InputWrapper_label {
+    width:100%;
+    font-size:10px;
+    color:rgb(178,178,198);
+}
+.InputWrapper_label_text{
+    transform: translateY(-50%);
+    position: relative;
+    top:50%;
+}

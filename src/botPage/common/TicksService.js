@@ -2,7 +2,6 @@ import { Map } from 'immutable';
 import { historyToTicks, getLast } from 'binary-utils';
 import { observer as globalObserver } from '../../common/utils/observer';
 import { doUntilDone, getUUID } from '../bot/tools';
-import { getTokenList } from '../../common/utils/storageManager';
 
 const parseTick = tick => ({
     epoch: +tick.epoch,
@@ -59,35 +58,19 @@ export default class TicksService {
 
         if (!this.active_symbols_promise) {
             this.active_symbols_promise = new Promise(resolve => {
-                this.getActiveSymbols().then(activeSymbols => {
-                    this.pipSizes = activeSymbols
-                        .reduce((s, i) => s.set(i.symbol, +(+i.pip).toExponential().substring(3)), new Map())
-                        .toObject();
+                this.api.getActiveSymbolsBrief().then(r => {
+                    const { active_symbols: symbols } = r;
+                    this.pipSizes = symbols.reduce((accumulator, currSymbol) => {
+                        // eslint-disable-next-line no-param-reassign
+                        accumulator[currSymbol.symbol] = `${currSymbol.pip}`.length - 2;
+                        return accumulator;
+                    }, {});
                     resolve(this.pipSizes);
                 });
             });
         }
         return this.active_symbols_promise;
     }
-    getActiveSymbols = () => {
-        const getSymbols = resolve => {
-            // eslint-disable-next-line camelcase
-            this.api.send({ active_symbols: 'brief' }).then(({ active_symbols }) =>
-                // eslint-disable-next-line camelcase
-                resolve(active_symbols)
-            );
-        };
-        return new Promise(async resolve => {
-            const tokenList = getTokenList();
-            if (tokenList.length) {
-                this.api.authorize(tokenList[0].token).then(() => {
-                    getSymbols(resolve);
-                });
-            } else {
-                getSymbols(resolve);
-            }
-        });
-    };
     request(options) {
         const { symbol, granularity } = options;
 
@@ -254,14 +237,14 @@ export default class TicksService {
         return [];
     }
     requestTicks(options) {
-        const { symbol, granularity, style } = options;
+        const { symbol, granularity, style, count = 1000 } = options;
 
         return new Promise((resolve, reject) => {
             doUntilDone(() =>
                 this.api.getTickHistory(symbol, {
                     subscribe  : 1,
                     end        : 'latest',
-                    count      : 1000,
+                    count,
                     granularity: granularity ? Number(granularity) : undefined,
                     style,
                 })
@@ -283,3 +266,6 @@ export default class TicksService {
         });
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/common/TicksService.js

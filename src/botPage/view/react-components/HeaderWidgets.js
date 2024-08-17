@@ -21,11 +21,16 @@ const ServerTime = ({ api }) => {
     };
 
     const getServerTime = () => {
-        api.send({ time: 1 }).then(response => {
+        api.getServerTime().then(response => {
             const newDate = new Date(response.time * 1000);
             setDate(newDate);
             setHasApiResponse(true);
         });
+        // api.send({ time: 1 }).then(response => {
+        //     const newDate = new Date(response.time * 1000);
+        //     setDate(newDate);
+        //     setHasApiResponse(true);
+        // });
     };
 
     React.useEffect(() => {
@@ -42,7 +47,10 @@ const ServerTime = ({ api }) => {
 
     React.useEffect(() => updateTime(), [date]);
 
-    return <b>{dateString}</b>;
+    return <b> {dateString} </b>;
 };
 
 export default ServerTime;
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/react-components/HeaderWidgets.js

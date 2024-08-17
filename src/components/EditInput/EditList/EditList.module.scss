@@ -1,0 +1,13 @@
+@import "../../colors.scss";
+
+.add {
+  width: 100%;
+  font-size: 11px;
+  text-align: right;
+  cursor: pointer;
+  transition: 0.2s all;
+
+  &:hover {
+    color: $main;
+  }
+}

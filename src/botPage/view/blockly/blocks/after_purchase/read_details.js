@@ -2,6 +2,7 @@
 import { translate } from '../../../../../common/i18n';
 import { insideAfterPurchase } from '../../relationChecker';
 import config from '../../../../common/const';
+import theme from '../../theme';
 
 Blockly.Blocks.read_details = {
     init: function init() {
@@ -9,9 +10,8 @@ Blockly.Blocks.read_details = {
             .appendField(translate('Contract Detail:'))
             .appendField(new Blockly.FieldDropdown(config.lists.DETAILS), 'DETAIL_INDEX');
         this.setOutput(true, null);
-        this.setColour('#f2f2f2');
+        this.setColour(theme.subBlockColor);
         this.setTooltip(translate('Reads a selected option from contract details list'));
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
     },
     onchange: function onchange(ev) {
         insideAfterPurchase(this, ev, 'Read Contract Details');
@@ -19,6 +19,9 @@ Blockly.Blocks.read_details = {
 };
 Blockly.JavaScript.read_details = block => {
     const detailIndex = block.getFieldValue('DETAIL_INDEX');
-    const code = `Bot.readDetails(${detailIndex})`;
+    const code = `Bot[BinaryBotPrivateVirtualSettings.ongoing && BinaryBotPrivateVirtualSettings.active && Bot.isVirtualValid() ? 'readDetailsVirtual' : 'readDetails']('${detailIndex}')`;
     return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/after_purchase/read_details.js

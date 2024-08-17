@@ -50,3 +50,6 @@ const signal = (state = initialState, action) => {
 };
 
 export default signal;
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/state/reducers/index.js

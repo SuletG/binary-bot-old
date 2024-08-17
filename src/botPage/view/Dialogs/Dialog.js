@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import DialogComponent from './DialogComponent';
 import { observer as globalObserver } from '../../../common/utils/observer';
 
@@ -7,7 +7,7 @@ export default class Dialog {
     constructor(id, title, content, options = {}) {
         this.componentId = `${id}-component`;
 
-        ReactDOM.render(
+        render(
             <DialogComponent id={this.componentId} title={title} content={content} options={options} />,
             $(`#${id}`)[0]
         );
@@ -27,3 +27,6 @@ export default class Dialog {
         });
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/Dialogs/Dialog.js

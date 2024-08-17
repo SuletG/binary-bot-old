@@ -5,16 +5,27 @@
  */
 
 function hide_menu($element) {
-    $element.animate({ opacity: 0 }, 100, function() {
-        $element.css('visibility', 'hidden').css('display', 'none');
-    });
+    $element.animate(
+        {
+            opacity: 0,
+        },
+        100,
+        function() {
+            $element.css('visibility', 'hidden').css('display', 'none');
+        }
+    );
 }
 
 function show_menu($element) {
     $element
         .css('visibility', 'visible')
         .css('display', 'block')
-        .animate({ opacity: 1 }, 100);
+        .animate(
+            {
+                opacity: 1,
+            },
+            100
+        );
 }
 
 function navMenuListener() {
@@ -59,10 +70,16 @@ function topNavMenuListener() {
                 .find('span')
                 .hasClass('nav-caret')
         ) {
-            $el.animate({ opacity: 0 }, 100, function() {
-                $el.css('visibility', 'hidden');
-                show_menu(childMenu);
-            });
+            $el.animate(
+                {
+                    opacity: 0,
+                },
+                100,
+                function() {
+                    $el.css('visibility', 'hidden');
+                    show_menu(childMenu);
+                }
+            );
         }
     });
 }
@@ -174,6 +191,7 @@ function initMenuContent(_menu_containers) {
         }
         return false;
     });
+
     function push_to_listeners(info) {
         // push to listeners events
         for (var i = 0; i < listeners_events.length; i++) {
@@ -186,3 +204,6 @@ navMenuListener();
 topNavMenuListener();
 documentListener();
 langListener();
+
+// WEBPACK FOOTER //
+// ./src/common/binary-ui/dropdown.js

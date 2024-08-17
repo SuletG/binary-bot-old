@@ -263,3 +263,6 @@ if (typeof module === 'object' && module.exports) {
     module.exports = clone;
 }
 /* eslint-enable */
+
+// WEBPACK FOOTER //
+// ./src/botPage/common/clone.js

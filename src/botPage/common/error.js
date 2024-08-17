@@ -4,3 +4,6 @@ export const createError = (name, message) => {
     e.name = name;
     return e;
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/common/error.js

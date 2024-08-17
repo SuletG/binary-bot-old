@@ -2,6 +2,7 @@
 import { observer as globalObserver } from '../../../../../common/utils/observer';
 import { translate } from '../../../../../common/i18n';
 import { deleteBlocksLoadedBy, loadRemote, recoverDeletedBlock } from '../../utils';
+import theme from '../../theme';
 
 Blockly.Blocks.loader = {
     init: function init() {
@@ -9,9 +10,8 @@ Blockly.Blocks.loader = {
             .appendField(`${translate('Load Block From')}:`)
             .appendField(new Blockly.FieldTextInput('http://www.example.com/block.xml'), 'URL');
         this.setInputsInline(true);
-        this.setColour('#dedede');
+        this.setColour(theme.subBlockColor);
         this.setTooltip(translate('Load blocks from url'));
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
         this.loadedByMe = [];
         this.loadedVariables = [];
     },
@@ -30,7 +30,7 @@ Blockly.Blocks.loader = {
         }
         if (
             !this.isInFlyout &&
-            (ev.type === 'change' && ev.element === 'field') &&
+            ev.type === 'change' && ev.element === 'field' &&
             ev.blockId === this.id &&
             !this.disabled
         ) {
@@ -52,7 +52,9 @@ Blockly.Blocks.loader = {
 };
 
 Blockly.JavaScript.loader = block =>
-    block.loadedVariables.length
-        ? // eslint-disable-next-line no-underscore-dangle
-        `var ${block.loadedVariables.map(v => Blockly.JavaScript.variableDB_.safeName_(v)).toString()};`
+    block.loadedVariables.length // eslint-disable-next-line no-underscore-dangle
+        ? `var ${block.loadedVariables.map(v => Blockly.JavaScript.variableDB_.safeName_(v)).toString()};`
         : '';
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/tools/loader.js

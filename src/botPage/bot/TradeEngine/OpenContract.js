@@ -20,7 +20,50 @@ export default Engine =>
 
                 this.data.contract = contract;
 
-                broadcastContract({ accountID: this.accountInfo.loginid, ...contract });
+                broadcastContract({
+                    accountID: this.accountInfo.loginid,
+                    ...contract,
+                });
+
+                if (this.isSold) {
+                    contractStatus({
+                        id  : 'contract.sold',
+                        data: contract.transaction_ids.sell,
+                        contract,
+                    });
+                    contractSettled(contract);
+                    this.contractId = '';
+                    this.updateTotals(contract);
+                    if (this.afterPromise) {
+                        this.afterPromise();
+                    }
+
+                    this.store.dispatch(sell());
+
+                    this.cancelSubscriptionTimeout();
+                } else {
+                    this.store.dispatch(openContractReceived());
+                    if (!this.isExpired) {
+                        this.resetSubscriptionTimeout();
+                    }
+                }
+            });
+
+            this.listenVirtual('proposal_open_contract', r => {
+                const contract = r.proposal_open_contract;
+
+                if (!this.expectedContractId(contract.contract_id)) {
+                    return;
+                }
+
+                this.setContractFlags(contract);
+
+                this.dataVirtual.contract = contract;
+
+                broadcastContract({
+                    accountID: this.accountInfo.loginid,
+                    ...contract,
+                });
 
                 if (this.isSold) {
                     contractStatus({
@@ -57,11 +100,16 @@ export default Engine =>
             }
             this.contractId = contractId;
 
-            doUntilDone(() =>
-                this.api.subscribeToOpenContract(contractId).then(response => {
+            doUntilDone(() => {
+                const api =
+                    this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                        ? this.virtualApi
+                        : this.api;
+                return api.subscribeToOpenContract(contractId).then(response => {
                     this.openContractId = response.proposal_open_contract.id;
-                })
-            ).catch(error => {
+                    this.actualContract = response.proposal_open_contract;
+                });
+            }).catch(error => {
                 observer.emit('reset_animation');
                 observer.emit('Error', error);
             });
@@ -71,6 +119,11 @@ export default Engine =>
             this.subscriptionTimeout = setInterval(() => {
                 this.subscribeToOpenContract();
                 this.resetSubscriptionTimeout(timeout);
+                const api =
+                    this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                        ? this.virtualApi
+                        : this.api;
+                api.getPortfolio();
             }, timeout * 1000);
         }
         cancelSubscriptionTimeout() {
@@ -96,7 +149,18 @@ export default Engine =>
             return this.contractId && contractId === this.contractId;
         }
         getSellPrice() {
-            const { bid_price: bidPrice, buy_price: buyPrice, currency } = this.data.contract;
-            return Number(roundBalance({ currency, balance: Number(bidPrice) - Number(buyPrice) }));
+            const { bid_price: bidPrice, buy_price: buyPrice, currency } =
+                this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing
+                    ? this.dataVirtual.contract
+                    : this.data.contract;
+            return Number(
+                roundBalance({
+                    currency,
+                    balance: Number(bidPrice) - Number(buyPrice),
+                })
+            );
         }
     };
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/OpenContract.js

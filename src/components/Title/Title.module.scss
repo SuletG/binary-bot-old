@@ -1,0 +1,96 @@
+@import '../colors.scss';
+.Title_up {
+    display: flex;
+}
+.Title_Buttons{
+    width:40px;
+    display: flex;
+    align-items: center;
+    box-sizing:content-box;
+    justify-content: space-between;
+    padding:0px $padding;
+}
+.Title_button{
+    width:14px;
+    height:14px;
+    cursor: pointer;
+    border-radius: 50%;
+    text-align: center !important;
+    line-height: 12px;
+}
+.Title_button svg{
+    opacity: 0;
+}
+.Title_button:hover svg{
+    opacity: 1;
+}
+.Title_button_minimaze {
+    background:#FEC242;
+}
+.Title_button_close {
+    font-size:18px;
+    position: absolute;
+    top:0px;
+    right:5px;
+}
+.Title_button_minimaze_icon{
+    width:8px;
+    color:rgb(40,40,40);
+    font-size:8px;
+    position: relative;
+    top:-3px;
+}
+.Title_button_close_icon {
+    color: $input-color;
+    width:10px;
+    cursor: pointer;
+    position: relative;
+    top:9px;
+    right:12px;
+}
+.Title_button_close_icon:hover{
+    color: $main;
+}
+.Title_button_minimaze_iconPlus{
+    font-size:10px;
+    width:6px;
+}
+.Title_switchButton{
+    height:26px;
+    width:calc(100% - 30px);
+    line-height: 26px;
+    box-sizing: border-box;
+    background:$input-bg;
+    border-radius: 6px;
+    cursor: pointer;
+    margin:5px 0px 15px 15px;
+    transition:0.2s all;
+    padding:2px;
+    position: relative;
+}
+.Title_switchButton:hover{
+    /* background:#dddee1; */
+}
+.Title_selectedButton{
+    width:50%;
+    height:100%;
+    background:$bg-hard;
+    border-radius: 6px;
+    transition:0.2s all;
+    cursor:pointer;
+    position: relative;
+}
+.Title_switchText{
+    width:50%;
+    z-index: 1;
+    text-align: center !important;
+    font-family: $font;
+    font-size:12px;
+    font-weight: 500;
+    color:$color;
+    position: absolute;
+    top:0px;
+}
+.Title_switchTextLast{
+    left:50%;
+}

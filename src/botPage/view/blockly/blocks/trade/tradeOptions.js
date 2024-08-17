@@ -12,15 +12,54 @@ import { findTopParentBlock, hideInteractionsFromBlockly, getBlocksByType } from
 import { translate } from '../../../../../common/i18n';
 import { observer as globalObserver } from '../../../../../common/utils/observer';
 import config from '../../../../common/const';
+import theme from '../../theme';
+import logHandler from '../../../logger';
 
 export default () => {
     Blockly.Blocks.tradeOptions = {
         init: function init() {
             setInputList(this);
             this.setPreviousStatement(true, 'TradeOptions');
-            this.setColour('#f2f2f2');
+            this.setColour(theme.subBlockColor);
         },
         onchange: function onchange(ev) {
+            const {
+                svgGroup_: { children },
+                childBlocks_,
+            } = this;
+            childBlocks_.forEach(({ isShadow_, svgPath_, svgPathDark_ }) => {
+                if (isShadow_) {
+                    svgPath_.style.fill = theme.underBlockColor;
+                    svgPathDark_.style.display = 'none';
+                }
+            });
+            Object.keys(children)
+                .filter(a => {
+                    if (children[a].tagName === 'g') {
+                        if (Object.keys(children[a].children).length === 4) {
+                            if (children[a].children[3].tagName === 'g') {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                })
+                .map(a => {
+                    if (children[a].classList.length === 0) {
+                        children[a].children[3].children[0].style.fill = theme.indicatorColorAccent;
+                        children[a].children[1].style.fill = theme.blockColor;
+                    } else if (children[a].classList[0] === 'blocklyEditableText') {
+                        children[a].children[0].style.fill = theme.underBlockColor;
+                    } else if (children[a].classList[0] === 'blocklyDraggable') {
+                        children[a].children[1].style.fill = theme.subBlockColor;
+                    }
+
+                    return a;
+                });
+            // if(this.svgGroup_.children[3].tagName === 'g' && this.svgGroup_.children[4].tagName === 'g') {
+            //     this.svgGroup_.children[3].children[3].children[0].style.fill = theme.shadowDefault;
+            //     this.svgGroup_.children[4].children[3].children[0].style.fill = theme.shadowDefault;
+            // }
             insideTrade(this, ev, translate('Trade Options'));
             if (ev.group === 'BackwardCompatibility') {
                 return;
@@ -72,7 +111,9 @@ export default () => {
 
                     this.pollForContracts(symbol).then(contracts => {
                         if (ev.name === 'SYMBOL_LIST' && ev.oldValue !== ev.newValue) {
-                            globalObserver.setState({ symbol: ev.newValue });
+                            globalObserver.setState({
+                                symbol: ev.newValue,
+                            });
                             // Called to update duration options and set min durations
                             this.updateDurationLists(contracts, true, true);
                         } else if (['TRADETYPE_LIST'].includes(ev.name) && ev.oldValue !== ev.newValue) {
@@ -284,7 +325,6 @@ export default () => {
                         } else if (setMinDuration) {
                             const connectedBlock = durationInput.connection.targetBlock();
                             const minDuration = durations.find(d => d.unit === selectedDuration);
-
                             if (connectedBlock.isShadow() && minDuration) {
                                 connectedBlock.setFieldValue(minDuration.minimum, 'NUM');
                             }
@@ -329,13 +369,10 @@ export default () => {
         const durationType = block.getFieldValue('DURATIONTYPE_LIST');
         const currency = block.getFieldValue('CURRENCY_LIST');
         const amount = Blockly.JavaScript.valueToCode(block, 'AMOUNT', Blockly.JavaScript.ORDER_ATOMIC) || '0';
-
         const isVisibleField = field => block.getInput(field) && block.getInput(field).isVisible();
-
         let predictionValue = 'undefined';
         let barrierOffsetValue = 'undefined';
         let secondBarrierOffsetValue = 'undefined';
-
         if (isVisibleField('PREDICTION')) {
             predictionValue =
                 Blockly.JavaScript.valueToCode(block, 'PREDICTION', Blockly.JavaScript.ORDER_ATOMIC) || '0';
@@ -361,21 +398,22 @@ export default () => {
                 Blockly.JavaScript.valueToCode(block, 'SECONDBARRIEROFFSET', Blockly.JavaScript.ORDER_ATOMIC) || '0';
             secondBarrierOffsetValue = getBarrierValue(barrierOffsetType, value);
         }
-
         const code = `
-            Bot.start({
-            limitations: BinaryBotPrivateLimitations,
-            duration: ${durationValue},
-            duration_unit: '${durationType}',
-            currency: '${currency}',
-            amount: ${amount},
-            prediction: ${predictionValue},
-            barrierOffset: ${barrierOffsetValue},
-            secondBarrierOffset: ${secondBarrierOffsetValue},
-            basis: '${block.type === 'tradeOptions_payout' ? 'payout' : 'stake'}',
-            });
-        `;
+Bot.start({
+    limitations: BinaryBotPrivateLimitations,
+    duration: ${durationValue},
+    duration_unit: '${durationType}',
+    currency: '${currency}',
+    amount: ${amount},
+    prediction: ${predictionValue},
+    barrierOffset: ${barrierOffsetValue},
+    secondBarrierOffset: ${secondBarrierOffsetValue},
+    basis: '${block.type === 'tradeOptions_payout' ? 'payout' : 'stake'}',
+});`;
         return code;
     };
     Blockly.JavaScript.tradeOptions_payout = Blockly.JavaScript.tradeOptions;
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/trade/tradeOptions.js

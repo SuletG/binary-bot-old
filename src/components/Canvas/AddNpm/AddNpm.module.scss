@@ -1,0 +1,48 @@
+@import "../../colors.scss";
+.addNpm {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  font-family: $font;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 20;
+}
+.wrapper {
+  background: white;
+  padding: 30px;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.title {
+  width: 100%;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center !important;
+}
+.text {
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.code {
+  margin-bottom: 40px;
+}
+.codeNoMargin {
+  margin-bottom: 10px;
+}
+.close{
+    cursor: pointer;
+    transition: 0.2s all;;
+    position: absolute;
+    top:8px;
+    right:8px;
+
+    &:hover{
+        transform: scale(1.1);
+        color:$main;
+    }
+}

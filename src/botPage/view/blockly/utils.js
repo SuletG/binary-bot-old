@@ -1,3 +1,4 @@
+import cryptojs from 'crypto-js';
 import { fieldGeneratorMapping } from './blocks/shared';
 import { saveAs } from '../shared';
 import config from '../../common/const';
@@ -83,7 +84,9 @@ export const strategyHasValidTradeTypeCategory = xml => {
                                     availableCategories.some(
                                         category =>
                                             category[1] === tradeTypeCategory &&
-                                            Object.assign(f, { textContent: tradeTypeCategory })
+                                            Object.assign(f, {
+                                                textContent: tradeTypeCategory,
+                                            })
                                     )
                             );
                         } catch (e) {
@@ -179,7 +182,7 @@ export const setBlockTextColor = block => {
                     if (field instanceof Blockly.FieldLabel) {
                         const svgElement = field.getSvgRoot();
                         if (svgElement) {
-                            svgElement.style.setProperty('fill', 'white', 'important');
+                            svgElement.style.setProperty('fill', '#ccc', 'important');
                         }
                     }
                 });
@@ -190,7 +193,7 @@ export const setBlockTextColor = block => {
     if (field) {
         const svgElement = field.getSvgRoot();
         if (svgElement) {
-            svgElement.style.setProperty('fill', 'white', 'important');
+            svgElement.style.setProperty('fill', 'red', 'important');
         }
     }
     Blockly.Events.recordUndo = true;
@@ -273,10 +276,51 @@ export const insideMainBlocks = block => {
     return parent.type && isMainBlock(parent.type);
 };
 
-export const save = (filename = 'binary-bot', collection = false, xmlDom) => {
-    xmlDom.setAttribute('collection', collection ? 'true' : 'false');
-    const data = Blockly.Xml.domToPrettyText(xmlDom);
-    saveAs({ data, type: 'text/xml;charset=utf-8', filename: `${filename}.xml` });
+export const save = async (
+    filename = 'binary-bot',
+    password = '',
+    clientid = '',
+    hideBlocks = false,
+    showTrade = false,
+    xmlDom,
+    expiration = ''
+) => {
+    // xmlDom.setAttribute('collection', hideBlocks ? 'true' : 'false');
+    const data = Blockly.Xml.domToText(xmlDom);
+    const obj = JSON.stringify({
+        data,
+        password,
+        clientid,
+        hideBlocks,
+        showTrade,
+        expiration,
+    });
+    let sc;
+    try {
+        sc = await new Promise(r => {
+            const xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = () => {
+                if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+                    r(xmlHttp.responseText);
+                }
+            };
+            xmlHttp.open('GET', '/auth/token', true); // true for asynchronous
+            xmlHttp.send(null);
+        });
+    } catch (error) {
+        globalObserver.emit('ui.log.info', `${translate('Connection error, please try again')}`);
+        return;
+    }
+    const ciphertext = cryptojs.AES.encrypt(obj, sc).toString();
+    // saveAs({ data, type: 'text/xml;charset=utf-8', filename: `${filename}.xml` });
+    const newObj = JSON.stringify({
+        data: ciphertext,
+    });
+    saveAs({
+        data    : newObj,
+        type    : 'application/json;charset=utf-8',
+        filename: `${filename}.json`,
+    });
 };
 
 export const disable = (blockObj, message) => {
@@ -459,6 +503,7 @@ const loadBlocksFromHeader = (blockStr = '', header) =>
         try {
             xml = Blockly.Xml.textToDom(blockStr);
         } catch (e) {
+            console.log('header');
             reject(translate('Unrecognized file format.'));
         }
         try {
@@ -576,11 +621,13 @@ export const importFile = xml =>
     });
 
 export const saveBeforeUnload = () => {
-    window.onbeforeunload = () => {
-        const currentDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
-        localStorage.setItem('previousStrat', Blockly.Xml.domToPrettyText(currentDom));
-        return null;
-    };
+    if (!Blockly.isProtected) {
+        window.onbeforeunload = () => {
+            const currentDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+            localStorage.setItem('previousStrat', Blockly.Xml.domToPrettyText(currentDom));
+            return null;
+        };
+    }
 };
 
 export const removeParam = key => {
@@ -607,3 +654,6 @@ export const removeParam = key => {
 };
 
 export const getPreviousStrat = () => localStorage.getItem('previousStrat');
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/utils.js

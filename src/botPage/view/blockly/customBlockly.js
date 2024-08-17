@@ -2,6 +2,7 @@ import GTM from '../../../common/gtm';
 import { translate, translateLangToLang } from '../../../common/i18n';
 import { getLanguage } from '../../../common/lang';
 import { save } from './utils';
+import theme from './theme';
 
 /* eslint-disable */
 Blockly.WorkspaceAudio.prototype.preload = function() {};
@@ -39,11 +40,28 @@ Blockly.FieldDropdown.prototype.renderSelectedText_ = function() {
     }
     this.textElement_.setAttribute('text-anchor', 'start');
     this.textElement_.setAttribute('x', 0);
+    this.textElement_.style.fill = '#ccc';
 
     this.size_.height = 30;
     this.size_.width = Blockly.Field.getCachedWidth(this.textElement_);
 };
 
+Blockly.FieldDropdown.prototype.positionMenu_ = function(a) {
+    var b = Blockly.utils.getViewportBBox(),
+        c = this.getAnchorDimensions_();
+    this.createWidget_(a);
+    var d = Blockly.utils.uiMenu.getSize(a),
+        e = Blockly.FieldDropdown.MAX_MENU_HEIGHT_VH * document.documentElement.clientHeight;
+    d.height > e && (d.height = e);
+    this.sourceBlock_.RTL && Blockly.utils.uiMenu.adjustBBoxesForRTL(b, c, d);
+    Blockly.WidgetDiv.positionWithAnchor(b, c, d, this.sourceBlock_.RTL);
+    a.getElement().focus();
+    if (this.sourceBlock_.mainType === 'indicator') {
+        a.element_.style['background-color'] = theme.indicatorColorAccent;
+    } else {
+        a.element_.style['background-color'] = theme.underBlockColor;
+    }
+};
 Blockly.BlockSvg.SEP_SPACE_X = 20;
 Blockly.Field.prototype.init = function() {
     if (this.fieldGroup_) {
@@ -68,10 +86,12 @@ Blockly.Field.prototype.init = function() {
     );
     this.textElement_ = Blockly.utils.createSvgElement(
         'text',
-        { class: 'blocklyText', y: this.size_.height - 10 },
+        {
+            class: 'blocklyText',
+            y: this.size_.height - 10,
+        },
         this.fieldGroup_
     );
-
     this.updateEditable();
     this.sourceBlock_.getSvgRoot().appendChild(this.fieldGroup_);
     this.mouseDownWrapper_ = Blockly.bindEventWithChecks_(this.fieldGroup_, 'mousedown', this, this.onMouseDown_);
@@ -86,7 +106,10 @@ Blockly.FieldLabel.prototype.init = function() {
     // Build the DOM.
     this.textElement_ = Blockly.utils.createSvgElement(
         'text',
-        { class: 'blocklyText', y: this.size_.height - 2 },
+        {
+            class: 'blocklyText',
+            y: this.size_.height - 2,
+        },
         null
     );
     if (this.class_) {
@@ -95,8 +118,11 @@ Blockly.FieldLabel.prototype.init = function() {
     if (!this.visible_) {
         this.textElement_.style.display = 'none';
     }
+    if (this.name === 'TITLE') {
+        this.textElement_.style.fill = '#f0b90a';
+        console.log(this.textElement_.style.fill);
+    }
     this.sourceBlock_.getSvgRoot().appendChild(this.textElement_);
-
     // Configure the field to be transparent with respect to tooltips.
     this.textElement_.tooltip = this.sourceBlock_;
     Blockly.Tooltip.bindMouseEvents(this.textElement_);
@@ -251,7 +277,10 @@ Blockly.FieldLabel.prototype.init = function() {
     // Build the DOM.
     this.textElement_ = Blockly.utils.createSvgElement(
         'text',
-        { class: 'blocklyText', y: this.size_.height - 3 },
+        {
+            class: 'blocklyText',
+            y: this.size_.height - 3,
+        },
         null
     );
     if (this.class_) {
@@ -260,13 +289,15 @@ Blockly.FieldLabel.prototype.init = function() {
     if (!this.visible_) {
         this.textElement_.style.display = 'none';
     }
+    if (this.name === 'TITLE') {
+        this.textElement_.style.fill = '#f0b90a';
+    }
     this.sourceBlock_.getSvgRoot().appendChild(this.textElement_);
-
     // Configure the field to be transparent with respect to tooltips.
+
     this.textElement_.tooltip = this.sourceBlock_;
     Blockly.Tooltip.bindMouseEvents(this.textElement_);
     // Force a render.
-    this.render_();
 };
 // Override inline editor blockly
 Blockly.FieldTextInput.prototype.showInlineEditor_ = function(quietInput) {
@@ -332,12 +363,15 @@ Blockly.ContextMenu.show = (e, menuOptions, rtl) => {
     originalContextMenuFn(e, menuOptions, rtl);
 };
 Blockly.Input.prototype.attachShadowBlock = function(value, name, shadowBlockType) {
-    const shadowBlock = this.sourceBlock_.workspace.newBlock(shadowBlockType);
+    const shadowBlock = this.sourceBlock_.workspace.newBlock(shadowBlockType, 'shadow');
     shadowBlock.setShadow(true);
     shadowBlock.setFieldValue(value, name); // Refactor when using shadow block for strings in future
     shadowBlock.outputConnection.connect(this.connection);
     shadowBlock.initSvg();
     shadowBlock.render();
+    shadowBlock.svgPath_.style.fill = '#404855';
+    shadowBlock.svgPathDark_.style.display = 'none';
+    // shadowBlock.inputList[0].fieldRow[0].textElement_.style.fill = '#f0b90a !important';
 };
 
 /**
@@ -348,7 +382,10 @@ Blockly.Input.prototype.attachShadowBlock = function(value, name, shadowBlockTyp
 Blockly.Toolbox.TreeNode.prototype.onClick_ = function(_e) {
     // eslint-disable-next-line no-underscore-dangle
     const blocklyCategoryName = translateLangToLang(_e.target.innerText, getLanguage(), 'en');
-    GTM.pushDataLayer({ event: 'Click Block Category', blocklyCategoryName });
+    GTM.pushDataLayer({
+        event: 'Click Block Category',
+        blocklyCategoryName,
+    });
 
     // Expand icon.
     if (this.hasChildren() && this.isUserCollapsible_) {
@@ -455,3 +492,114 @@ Blockly.Block.prototype.getRootInputTargetBlock = function() {
 
     return inputName;
 };
+
+function joint(a) {
+    var b;
+
+    b = a[a.length - 1];
+
+    a.pop();
+
+    if (a.length > 1) {
+        a = joint(a);
+    } else {
+        a = a[0];
+    }
+
+    return function() {
+        b.apply(new a());
+    };
+}
+
+Object.keys(Blockly.Blocks).map(a => {
+    // console.log(Blockly.Blocks["procedures_defnoreturn"]);
+    // if(a.includes('procedures')) {
+    //     Blockly.Blocks[a].onchange = function onchange() {
+    //         console.log(this);
+    //     }
+    // }
+
+    if (a.includes('math')) {
+        Blockly.Blocks[a].onchange = function onchange() {
+            this.childBlocks_.map(a => {
+                if (a.type === 'math_number') {
+                    a.svgPath_.style.fill = theme.underBlockColor;
+                    a.svgPathDark_.style.display = 'none';
+                    if (a.svgGroup_.children[3].children[0]) {
+                        a.svgGroup_.children[3].children[0].style.fill = theme.shadowDefault;
+                    }
+                }
+            });
+        };
+    } else if (a.includes('text')) {
+        Blockly.Blocks[a].onchange = function onchange() {
+            this.childBlocks_.map(a => {
+                if (a.type === 'text') {
+                    a.svgPath_.style.fill = theme.underBlockColor;
+                    a.svgPathDark_.style.display = 'none';
+                    if (a.svgGroup_.children[4].children[0]) {
+                        a.svgGroup_.children[4].children[0].style.fill = theme.shadowDefault;
+                    }
+                } else {
+                    if (a.svgGroup_.children[3].children[0]) {
+                        a.svgGroup_.children[3].children[0].style.fill = theme.shadowDefault;
+                    }
+                }
+            });
+        };
+    } else if (a.includes('lists')) {
+        Blockly.Blocks[a].onchange = function onchange() {
+            this.childBlocks_.map(a => {
+                if (a.type === 'variables_get' || a.type === 'text' || a.type === 'math_number') {
+                    a.svgPath_.style.fill = theme.underBlockColor;
+                    a.svgPathDark_.style.display = 'none';
+                    if (a.type === 'text') {
+                        if (a.svgGroup_.children[4].children[0]) {
+                            a.svgGroup_.children[4].children[0].style.fill = theme.shadowDefault;
+                        }
+                    } else {
+                        if (a.svgGroup_.children[3].children[0]) {
+                            a.svgGroup_.children[3].children[0].style.fill = theme.shadowDefault;
+                        }
+                    }
+                }
+            });
+        };
+    }
+});
+
+// Blockly.Block.prototype.jsonInitColour_ = function(a, b) {
+//     if ("colour" in a)
+//         if (void 0 === a.colour)
+//             console.warn(b + "Undefined color value.");
+//         else {
+//             var c = a.colour;
+//             console.log(this);
+//             this.childBlocks_.map(a => {a.svgPath_.style.fill = theme.shadowDefault;a.svgPathDark_.style.display = 'none';})
+//             try {
+//                 this.setColour(c)
+//             } catch (d) {
+//                 console.warn(b + "Illegal color value: ", c)
+//             }
+//             Object.keys(this.svgGroup_.children)
+//                 .filter(a => {
+//                     console.log(this.svgGroup_.children[a].tagName, a);
+//                     if(this.svgGroup_.children[a].tagName === 'g') {
+//                         console.log(this.svgGroup_.children);
+//                         if(Object.keys(this.svgGroup_.children[a].children).length === 4) {
+//                             if(this.svgGroup_.children[a].children[3].tagName === 'g') {
+
+//                                 return true;
+//                             }
+//                         }
+//                     }
+//                     return false;
+//                 })
+//                 .map(a => {
+//                     this.svgGroup_.children[a].children[3].children[1].style.fill = theme.shadowDefault;
+//                 })
+//         }
+// }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/customBlockly.js

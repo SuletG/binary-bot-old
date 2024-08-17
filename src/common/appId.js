@@ -9,17 +9,18 @@ import {
 } from '../common/utils/storageManager';
 import { parseQueryString, isProduction, getExtension } from '../common/utils/tools';
 import { getLanguage } from './lang';
-import AppIdMap from './appIdResolver';
-import Elevio from './elevio';
+// import AppIdMap from './appIdResolver';
+// import Elevio from './elevio';
 import GTM from './gtm';
 
 export const AppConstants = Object.freeze({
     STORAGE_ACTIVE_TOKEN: 'activeToken',
+    STORAGE_PROMOTER    : 'promoter',
 });
 
-const hostName = document.location.hostname;
+// const hostName = document.location.hostname;
 
-const queryToObjectArray = queryStr => {
+export const queryToObjectArray = queryStr => {
     const tokens = [];
     Object.keys(queryStr).forEach(o => {
         if (!/\d$/.test(o)) return;
@@ -38,6 +39,7 @@ const queryToObjectArray = queryStr => {
 
 export const oauthLogin = (done = () => 0) => {
     const queryStr = parseQueryString();
+
     const tokenObjectList = queryToObjectArray(queryStr);
     if (tokenObjectList.length) {
         $('#main').hide();
@@ -70,11 +72,11 @@ const isRealAccount = () => {
     return isReal;
 };
 
-const getDomainAppId = () => AppIdMap[hostName.replace(/^www./, '')];
+// const getDomainAppId = () => AppIdMap[hostName.replace(/^www./, '')];
 
 export const getDefaultEndpoint = () => ({
-    url  : isRealAccount() ? 'green.binaryws.com' : 'blue.binaryws.com',
-    appId: getStorage('config.default_app_id') || getDomainAppId() || 1169,
+    url  : isRealAccount() ? 'ws.derivws.com' : 'ws.derivws.com',
+    appId: 53373,
 });
 
 const generateOAuthDomain = () => {
@@ -82,14 +84,14 @@ const generateOAuthDomain = () => {
     if (endpointUrl) {
         return endpointUrl;
     } else if (isProduction()) {
-        return `oauth.binary.${getExtension()}`;
+        return 'oauth.deriv.be';
     }
-    return 'oauth.binary.com';
+    return 'oauth.deriv.com';
 };
 
-export const getServerAddressFallback = () => getCustomEndpoint().url || getDefaultEndpoint().url;
+export const getServerAddressFallback = () => getDefaultEndpoint().url;
 
-export const getAppIdFallback = () => getCustomEndpoint().appId || getDefaultEndpoint().appId;
+export const getAppIdFallback = () => getDefaultEndpoint().appId;
 
 export const getWebSocketURL = () => `wss://${getServerAddressFallback()}/websockets/v3`;
 
@@ -98,16 +100,15 @@ export const generateWebSocketURL = serverUrl => `wss://${serverUrl}/websockets/
 export const getOAuthURL = () =>
     `https://${generateOAuthDomain()}/oauth2/authorize?app_id=${getAppIdFallback()}&l=${getLanguage().toUpperCase()}`;
 
-export const getOAuthURLDeriv = () =>
-    `https://oauth.deriv.com/oauth2/authorize?app_id=31665&l=${getLanguage().toUpperCase()}`;
-
-// 19111
-
 const options = {
-    apiUrl  : getWebSocketURL(),
-    language: getLanguage().toUpperCase(),
-    appId   : getAppIdFallback(),
+    apiUrl   : getWebSocketURL(),
+    language : getLanguage().toUpperCase(),
+    appId    : 53373,
+    keepAlive: true,
+    // sendSpy : console.log,
 };
+
+export const getOptions = () => options;
 
 export const generateLiveApiInstance = () => new LiveApi(options);
 
@@ -136,7 +137,7 @@ export async function addTokenIfValid(token, tokenObjectList) {
         }
     } catch (e) {
         removeToken(tokenObjectList[0].token);
-        Elevio.logoutUser();
+        // Elevio.logoutUser();
         GTM.setVisitorId();
         throw e;
     }
@@ -160,3 +161,6 @@ export const logoutAllTokens = () =>
             }, logout);
         }
     });
+
+// WEBPACK FOOTER //
+// ./src/common/appId.js

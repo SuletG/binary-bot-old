@@ -2,6 +2,7 @@
 import { insideBeforePurchase } from '../../relationChecker';
 import { translate } from '../../../../../common/i18n';
 import { getPurchaseChoices } from '../shared';
+import theme from '../../theme';
 
 Blockly.Blocks.ask_price = {
     init: function init() {
@@ -9,12 +10,11 @@ Blockly.Blocks.ask_price = {
             .appendField(translate('Ask Price'))
             .appendField(new Blockly.FieldDropdown(() => getPurchaseChoices()), 'PURCHASE_LIST');
         this.setOutput(true, 'Number');
-        this.setColour('#f2f2f2');
+        this.setColour(theme.subBlockColor);
         this.setTooltip(translate('Ask Price for selected proposal'));
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
     },
     onchange: function onchange(ev) {
-        insideBeforePurchase(this, ev, 'Ask Price');
+        insideBeforePurchase(this, ev, 'Before');
     },
 };
 Blockly.JavaScript.ask_price = block => {
@@ -22,3 +22,6 @@ Blockly.JavaScript.ask_price = block => {
     const code = `Bot.getAskPrice('${purchaseList}')`;
     return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/before_purchase/ask_price.js

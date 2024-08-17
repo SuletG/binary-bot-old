@@ -5,8 +5,25 @@ import { translate } from '../../..//common/i18n';
 import { createError } from '../../common/error';
 import { doUntilDone } from '../tools';
 import { expectInitArg, expectTradeOptions } from '../sanitize';
+import {
+    Martingale,
+    Compound,
+    OscarsGrind,
+    Recover,
+    Equilibrium,
+    SmartMartingale,
+    BinaryMartingale,
+    Masaniello,
+    MartingaleList,
+    StakeList,
+    ProfitCompound,
+} from './money_managements';
+import Patterns from './Patterns';
+import Digits from './Digits';
+import RiskManagement from './RiskManagement';
 import Proposal from './Proposal';
 import Total from './Total';
+import Lists from './Lists';
 import Balance from './Balance';
 import OpenContract from './OpenContract';
 import Sell from './Sell';
@@ -61,11 +78,47 @@ const watchScope = ({ store, stopScope, passScope, passFlag }) => {
         });
     });
 };
-
-export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Proposal(Ticks(Total(class {}))))))) {
+export default class TradeEngine extends Lists(
+    Digits(
+        Patterns(
+            RiskManagement(
+                Masaniello(
+                    Equilibrium(
+                        Recover(
+                            SmartMartingale(
+                                BinaryMartingale(
+                                    Martingale(
+                                        OscarsGrind(
+                                            MartingaleList(
+                                                Compound(
+                                                    StakeList(
+                                                        Purchase(
+                                                            Sell(
+                                                                OpenContract(
+                                                                    Proposal(
+                                                                        Ticks(Total(ProfitCompound(Balance(class {}))))
+                                                                    )
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+) {
     constructor($scope) {
         super();
         this.api = $scope.api;
+        this.virtualApi = $scope.virtualApi;
         this.observer = $scope.observer;
         this.$scope = $scope;
         this.observe();
@@ -74,11 +127,18 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
             proposals        : [],
             forgetProposalIds: [],
         };
+        this.dataVirtual = {
+            contract         : {},
+            proposals        : [],
+            forgetProposalIds: [],
+        };
         this.store = createStore(rootReducer, applyMiddleware(thunk));
     }
     init(...args) {
+        this.toStop = false;
         const [token, options] = expectInitArg(args);
 
+        this.virtualSettings = options.virtualTrades;
         const { symbol } = options;
 
         this.initArgs = args;
@@ -89,55 +149,161 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
 
         this.watchTicks(symbol);
     }
-    start(tradeOptions) {
+    start = tradeOptions => {
+        const options = tradeOptions;
         if (!this.options) {
             throw createError('NotInitialized', translate('Bot.init is not called'));
         }
-
+        if (this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing) {
+            globalObserver.emit('bot.isVirtual', true);
+        } else {
+            globalObserver.emit('bot.isVirtual', false);
+        }
         globalObserver.emit('bot.running');
-        globalObserver.setState({ isRunning: true });
+        globalObserver.setState({
+            isRunning: true,
+        });
+        if (this.virtualSettings.active && this.virtualSettings.valid && this.virtualSettings.ongoing) {
+            options.amount = 0.35;
+        }
 
-        this.tradeOptions = expectTradeOptions(tradeOptions);
-
+        this.tradeOptions = expectTradeOptions(options);
         this.store.dispatch(start());
 
-        this.checkLimits(tradeOptions);
-
-        this.makeProposals({ ...this.options, ...tradeOptions });
-
+        this.checkLimits(options);
+        this.makeProposals({ ...this.options, ...options });
         this.checkProposalReady();
-    }
+    };
+
+    // loginVirtual(token) {
+    //     return new Promise(resolve => {
+    //         if (!token || !this.virtualSettings.valid || !this.virtualSettings.ongoing || !this.virtualSettings.active) {
+    //             resolve();
+    //             return;
+    //         }
+    //         this.listenVirtual('*', r => {
+    //             if(r.msg_type === 'authorize') {
+    //                 if(r.error) {
+    //                     this.virtualSettings.valid = false;
+    //                     globalObserver.emit('ui.log.error', translate('The token used on the Virtual Settings is invalid, disabling virtual trades'));
+    //                     this.virtualApi.disconnect();
+    //                 } else {
+    //                     // console.log(r.authorize);
+    //                     globalObserver.emit('bot.virtualApi', this.virtualApi);
+    //                 }
+    //                 resolve();
+    //             }
+    //         });
+    //         this.virtualApi.authorize(token);
+    //     })
+    // }
+
     loginAndGetBalance(token) {
         if (this.token === token) {
             return Promise.resolve();
         }
+        const validVirtual =
+            this.virtualSettings.token &&
+            this.virtualSettings.valid &&
+            this.virtualSettings.ongoing &&
+            this.virtualSettings.active;
 
-        doUntilDone(() => this.api.authorize(token)).catch(e => this.$scope.observer.emit('Error', e));
-
-        return new Promise(resolve =>
-            this.listen('authorize', ({ authorize }) => {
-                this.accountInfo = authorize;
-                this.token = token;
-
-                // Only subscribe to balance in browser, not for tests.
-                if (document) {
-                    this.api.subscribeToBalance().then(response => {
-                        const {
-                            balance: { balance, currency },
-                        } = response;
-
-                        globalObserver.setState({
-                            balance: Number(balance),
-                            currency,
+        return new Promise(async resolve => {
+            let virtual = !validVirtual;
+            let real = false;
+            while (!this.api.isReady() && (validVirtual ? !this.virtualApi.isReady() : true)) {
+                await new Promise(r => setTimeout(r, 100));
+            }
+            this.listen('*', async r => {
+                if (r.msg_type === 'authorize') {
+                    if (r.error) {
+                        globalObserver.emit(
+                            'ui.log.error',
+                            translate('Error authorizing the account, refresh the page and try again')
+                        );
+                        this.api.disconnect();
+                    } else {
+                        this.accountInfo = r.authorize;
+                        this.token = token;
+                        this.api.subscribeToBalance().then(response => {
+                            const {
+                                balance: { balance, currency },
+                            } = response;
+                            globalObserver.setState({
+                                balance: Number(balance),
+                                currency,
+                            });
+                            real = true;
+                            if (real && virtual) {
+                                resolve('real');
+                            }
                         });
-                        resolve();
-                    });
-                } else {
-                    resolve();
+                    }
                 }
-            })
-        );
+            });
+            if (validVirtual) {
+                this.listenVirtual('*', async r => {
+                    if (r.msg_type === 'authorize') {
+                        if (r.error) {
+                            this.virtualSettings.valid = false;
+                            globalObserver.emit(
+                                'ui.log.error',
+                                translate('The token used on the Virtual Settings is invalid, disabling virtual trades')
+                            );
+                            this.virtualApi.disconnect();
+                        } else {
+                            // console.log(r.authorize);
+                            globalObserver.emit('bot.virtualApi', this.virtualApi);
+                        }
+                        virtual = true;
+                        if (real && virtual) {
+                            resolve('virtual');
+                        }
+                    }
+                });
+            }
+            await Promise.all([
+                doUntilDone(() => this.api.authorize(token)).catch(e => this.$scope.observer.emit('Error', e)),
+                validVirtual
+                    ? doUntilDone(() => this.virtualApi.authorize(this.virtualSettings.token)).catch(e =>
+                        this.$scope.observer.emit('Error', e)
+                    )
+                    : () => {},
+            ]);
+        });
     }
+
+    // loginAndGetBalance1(token) {
+    //     if (this.token === token) {
+    //         return Promise.resolve();
+    //     }
+    //     doUntilDone(() => this.api.authorize(token)).catch(e => this.$scope.observer.emit('Error', e));
+
+    //     return new Promise(resolve =>
+    //         this.listen('authorize', async ({ authorize }) => {
+    //             this.accountInfo = authorize;
+    //             this.token = token;
+
+    //             // Only subscribe to balance in browser, not for tests.
+    //             if (document) {
+    //                 await this.loginVirtual(this.virtualSettings.token);
+    //                 this.api.subscribeToBalance().then(response => {
+    //                     const {
+    //                         balance: { balance, currency },
+    //                     } = response;
+
+    //                     globalObserver.setState({
+    //                         balance: Number(balance),
+    //                         currency,
+    //                     });
+    //                     resolve();
+    //                 });
+    //             } else {
+    //                 resolve();
+    //             }
+    //         })
+    //     );
+    // }
     getContractDuration() {
         const { duration, duration_unit: durationUnit } = this.tradeOptions;
 
@@ -162,4 +328,10 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
     listen(n, f) {
         this.api.events.on(n, f);
     }
+    listenVirtual(n, f) {
+        this.virtualApi.events.on(n, f);
+    }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/bot/TradeEngine/index.js

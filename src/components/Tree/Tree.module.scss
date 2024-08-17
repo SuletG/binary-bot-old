@@ -1,0 +1,89 @@
+@import '../colors.scss';
+
+.tree_icon{
+    font-size:10px !important;
+}
+.Tree_child {
+    border-bottom:1px $input-bg solid;
+    background:rgba(0,0,0,0) !important;
+    direction: rtl;
+}
+.Tree_child :global .MuiTreeItem-label{
+    direction: ltr;
+}
+.Tree_child :global .MuiTreeItem-iconContainer {
+    color:$input-color;
+    margin-right:0px;
+    transition: 0.2s all;
+}
+.Tree :global .Mui-expanded .MuiTreeItem-iconContainer{
+    transform:rotate(90deg);
+}
+
+.Tree_child:last-child{
+    border-color:rgba(0,0,0,0);
+}
+
+.Tree_child ul{
+    direction: ltr;
+}
+.Tree_child:hover{
+    background:rgba(250,250,250,0);
+    color:white;
+    transition:0.2s all;
+}
+.Tree_child :global .MuiTreeItem-content:hover .MuiTreeItem-iconContainer {
+    color:white;
+}
+.Tree_child :global .MuiTypography-root{
+    color:#6f758e;
+    font-family: $font;
+    font-size:12px;
+    font-weight: 400;
+    transition:0.2s all;
+}
+.Tree_child :global .MuiTypography-root:hover{
+    color:black;
+}   
+.Tree_child .tree_icon{
+    width:5px;
+}        
+
+.Tree :global .Mui-expanded .tree_icon{
+    width:8px;
+}
+.Tree :global ul.MuiCollapse-container{
+    background:rgba(0,0,0,0);
+    padding:0px;
+    margin:0px;
+}
+.Tree_child :global .MuiTreeItem-content{
+    padding:4px $padding;
+    transition:0.2s all;
+    box-sizing: border-box !important;
+}
+.Tree :global .Mui-expanded .MuiTreeItem-content{
+    padding:calc(#{$padding} * 2) $padding;
+}
+.Tree_child :global .MuiTreeItem-content:hover .MuiTypography-root{
+    color:white;
+}
+.Tree_child :global .MuiTreeItem-label{
+    background-color:rgba(0,0,0,0) !important;
+    padding-left:0px;
+}
+
+.Tree :global .Mui-expanded {
+    color:$color;
+
+}
+.Tree :global .Mui-expanded .MuiTypography-root{
+    color:white;
+}
+
+.Tree :global .Mui-expanded:hover{
+    background:white;
+}
+.Tree_alwaysOpen :global .MuiTreeItem-content {
+    cursor: default;
+}

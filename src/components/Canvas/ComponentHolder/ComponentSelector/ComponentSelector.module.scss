@@ -1,0 +1,47 @@
+
+.borderBox{
+    height:200px;
+    width:200px;
+    border:1px rgb(180,180,180) dashed;
+    box-sizing: border-box;
+    pointer-events: none;
+    transition:0.2s border;
+    position: absolute;
+    left:-4px;
+    top:-4px;
+    
+    .dot{
+        opacity: 0;
+        background:rgb(180,180,180);
+    }
+}
+.borderBoxOpen{
+    border:1px rgb(49,172,244) solid;
+    .dot{
+        opacity: 1;
+        background:rgb(49,172,244);
+    }
+}
+.dot{
+    width:6px;
+    height:6px;
+    border-radius: 50%;
+    transition:0.2s all;
+    position: absolute;
+}
+.dot_TopLeft{
+    top:-3px;
+    left:-3px;
+}
+.dot_TopRight{
+    top:-3px;
+    right:-3px;
+}
+.dot_BottomRight{
+    bottom:-3px;
+    right:-3px;
+}
+.dot_BottomLeft{
+    bottom:-3px;
+    left:-3px;
+}

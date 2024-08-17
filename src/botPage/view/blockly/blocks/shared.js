@@ -80,15 +80,13 @@ const getActiveSubMarket = submarkets =>
     );
 
 const getActiveMarket = markets =>
-    Object.keys(markets)
-        .filter(m => m !== 'basket_index')
-        .reduce(
-            (acc, market) =>
-                Object.keys(getActiveSubMarket(markets[market].submarkets)).length
-                    ? { ...acc, [market]: markets[market] }
-                    : { ...acc },
-            {}
-        );
+    Object.keys(markets).reduce(
+        (acc, market) =>
+            Object.keys(getActiveSubMarket(markets[market].submarkets)).length
+                ? { ...acc, [market]: markets[market] }
+                : { ...acc },
+        {}
+    );
 
 fieldGeneratorMapping.MARKET_LIST = () => {
     const markets = getActiveMarket(symbolApi.activeSymbols.getMarkets());
@@ -122,7 +120,6 @@ fieldGeneratorMapping.SUBMARKET_LIST = block => () => {
     if (submarketOptions.length === 0) {
         return [[translate('Not available'), 'na']];
     }
-
     return submarketOptions;
 };
 
@@ -154,7 +151,6 @@ fieldGeneratorMapping.SYMBOL_LIST = block => () => {
     if (symbolOptions.length === 0) {
         return [[translate('Not available'), 'na']];
     }
-
     return symbolOptions;
 };
 
@@ -231,7 +227,13 @@ export const getDurationsForContracts = (contractsAvailable, selectedContractTyp
         [translate('Hours'), 'h'],
         [translate('Days'), 'd'],
     ];
-    const noDurationsAvailable = [{ label: translate('Not available'), unit: 'na', minimum: 0 }];
+    const noDurationsAvailable = [
+        {
+            label  : translate('Not available'),
+            unit   : 'na',
+            minimum: 0,
+        },
+    ];
     if (!contractsAvailable) return noDurationsAvailable;
 
     const getMinimumAmount = input => input.replace(/\D/g, '');
@@ -347,9 +349,9 @@ export const getContractsAvailableForSymbolFromApi = async underlyingSymbol => {
             globalObserver.unregisterAll(`contractsLoaded.${underlyingSymbol}`);
         }
     } catch (e) {
-        if (window.trackJs) {
-            trackJs.addMetadata('getContractsAvailableForSymbolFromApi Error', e.message);
-        }
+        // if (window.trackJs) {
+        //     trackJs.addMetadata('getContractsAvailableForSymbolFromApi Error', e.message);
+        // }
     }
     if (typeof api.disconnect === 'function') {
         api.disconnect();
@@ -358,7 +360,9 @@ export const getContractsAvailableForSymbolFromApi = async underlyingSymbol => {
 };
 
 export const getBarriersForContracts = (contracts, selectedContractType, selectedDuration, selectedBarrierTypes) => {
-    const barriers = { values: [] };
+    const barriers = {
+        values: [],
+    };
     const category = getContractCategory(selectedContractType);
     const contractsForContractCategory = filterContractsByCategory(contracts, category, selectedContractType);
 
@@ -455,7 +459,7 @@ export const getPredictionForContracts = (contracts, selectedContractType) => {
 };
 
 export const disableRunButton = shouldDisable => {
-    const elRunButtons = document.querySelectorAll('#runButton, #summaryRunButton');
+    const elRunButtons = document.querySelectorAll('#runButton, #runButtonBottom, #summaryRunButton');
     const isRunning = globalObserver.getState('isRunning');
 
     elRunButtons.forEach(elRunButton => {
@@ -472,3 +476,6 @@ export const disableRunButton = shouldDisable => {
         }
     });
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/shared.js

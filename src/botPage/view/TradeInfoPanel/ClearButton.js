@@ -6,12 +6,26 @@ import { translate } from '../../../common/i18n';
 export default class ClearButton extends React.PureComponent {
     constructor() {
         super();
-        this.state = { isButtonDisabled: true };
+        this.state = {
+            isButtonDisabled: true,
+        };
     }
     componentDidMount() {
-        globalObserver.register('summary.enable_clear', () => this.setState({ isButtonDisabled: false }));
-        globalObserver.register('summary.disable_clear', () => this.setState({ isButtonDisabled: true }));
-        globalObserver.register('bot.running', () => this.setState({ isButtonDisabled: true }));
+        globalObserver.register('summary.enable_clear', () =>
+            this.setState({
+                isButtonDisabled: false,
+            })
+        );
+        globalObserver.register('summary.disable_clear', () =>
+            this.setState({
+                isButtonDisabled: true,
+            })
+        );
+        globalObserver.register('bot.running', () =>
+            this.setState({
+                isButtonDisabled: true,
+            })
+        );
     }
     // eslint-disable-next-line class-methods-use-this
     confirmClearLog() {
@@ -31,10 +45,13 @@ export default class ClearButton extends React.PureComponent {
             <button
                 title="Clear summary log"
                 id="summaryClearButton"
-                className="toolbox-button icon-clear"
+                className="icon-clear"
                 onClick={this.confirmClearLog}
                 disabled={this.state.isButtonDisabled}
             />
         );
     }
 }
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/TradeInfoPanel/ClearButton.js

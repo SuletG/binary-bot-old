@@ -2,6 +2,7 @@
 import config from '../../../../../common/const';
 import { translate } from '../../../../../../common/i18n';
 import { expectValue } from '../../shared';
+import theme from '../../../theme';
 
 Blockly.Blocks.ohlc_values_in_list = {
     init: function init() {
@@ -10,9 +11,8 @@ Blockly.Blocks.ohlc_values_in_list = {
             .appendField(new Blockly.FieldDropdown(config.ohlcFields), 'OHLCFIELD_LIST')
             .appendField(translate('values from candles list'));
         this.setOutput(true, 'Array');
-        this.setColour('#dedede');
+        this.setColour(theme.subBlockColor);
         this.setTooltip(translate('Returns a list of the selected candle values'));
-        this.setHelpUrl('https://github.com/binary-com/binary-bot/wiki');
     },
 };
 
@@ -21,3 +21,6 @@ Blockly.JavaScript.ohlc_values_in_list = block => {
     const ohlcField = block.getFieldValue('OHLCFIELD_LIST');
     return [`Bot.candleValues(${ohlcList}, '${ohlcField}')`, Blockly.JavaScript.ORDER_ATOMIC];
 };
+
+// WEBPACK FOOTER //
+// ./src/botPage/view/blockly/blocks/tools/candle/ohlc_values_in_list.js

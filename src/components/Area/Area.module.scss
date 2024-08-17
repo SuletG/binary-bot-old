@@ -1,0 +1,9 @@
+.Area{
+    background-image: linear-gradient(45deg, rgba(255,138,0,0.3) 25%, rgba(255,255,255,0.5) 25%, rgba(255,255,255,0.5) 50%, rgba(255,138,0,0.3) 50%, rgba(255,138,0,0.3) 75%, rgba(255,255,255,0.5) 75%, rgba(255,255,255,0.5) 100%);
+    background-size: 10px 10px;
+    position: absolute;
+    z-index: 1000000000;
+}
+.Area_padding{
+    background-image: linear-gradient(45deg, rgba(152,205,141,0.3) 25%, rgba(255,255,255,0.5) 25%, rgba(255,255,255,0.5) 50%, rgba(152,205,141,0.3) 50%, rgba(152,205,141,0.3) 75%, rgba(255,255,255,0.5) 75%, rgba(255,255,255,0.5) 100%);
+}

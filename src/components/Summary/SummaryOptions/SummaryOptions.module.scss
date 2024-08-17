@@ -1,0 +1,59 @@
+@import '../../colors.scss';
+.SummaryOptions{
+    width:100%;
+    float:left;
+}
+.SummaryOptions_buttons{
+    height: 42px;
+    border-radius: 20px;
+    box-shadow: 0px 1px 4px rgba(0,0,0,.25);
+    background: white;
+    transform: translateX(-50%);
+    display: flex;
+    padding:0px 8px;
+    position: relative;
+    float: left;
+    left: 50%;
+    z-index: 2;
+}
+.SummaryOptions_icon{
+    height:42px;
+    width:38px;
+    display: flex;
+    color:var($color);
+    transition:0.2s all;
+    cursor: pointer;
+    justify-content: center;
+    position: relative;
+    z-index: 20;
+}
+.SummaryOptions_icon:hover{
+    color:$main;
+}
+.SummaryOptions_iconTooltip {
+    width: 100px;
+    background: white;
+    z-index: 2;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: $font;
+    box-sizing: border-box;
+    justify-content: space-between;
+    box-shadow: 0px 0px 15px rgb(220, 220, 220);
+    font-size: 12px;
+    color: var($color);
+    position: absolute;
+    top: 36px;
+    left: 17px;
+    z-index: 33;
+}
+.SummaryOptions_iconTooltip:after {
+    content: " ";
+    position: absolute;
+    bottom: 100%; /* At the top of the Profile_tooltip */
+    left: 10px;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent white transparent;
+}
